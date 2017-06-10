@@ -102,7 +102,7 @@ class Car extends Component {
          const listItems = moviearr.map((number) =>
         <li onClick={this.getComponent.bind(this)} className="list-group-item">{number}</li>
   );
-         const numbers = [1, 2, 3, 4, 5]
+         const numbers = [1, 2, 3, 4, 6]
         // Map through cars and return linked cars
          const ProcessInstances = numbers.map((number) =>
         <li  className="list-group-item">{number}</li>)
