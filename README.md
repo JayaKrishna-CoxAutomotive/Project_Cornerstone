@@ -5,7 +5,11 @@ Java Process to access the service Layer
 
 ## To Run the Project.
  Download or Clone the git to your local.
+ 
  run npm install in root folder.
+ 
  run npm run build.
+ 
  run nodemon index.js
+ 
  go to http://localhost:3000
