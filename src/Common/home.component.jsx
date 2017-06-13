@@ -2,8 +2,7 @@ var React = require("react");
 var Router=require("react-router");
 var Route=require("react-router");
 var ReactDOM = require('react-dom');
-var $ = require ('jquery')
-
+var $ = require ('jquery');
 
 
       
@@ -72,7 +71,7 @@ var name = e.target.name;
       success: function(data) {
         //We set the state again after submission, to update with the submitted data
         this.setState({data: data});
-        console.log(data)
+        console.log(data);
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("http://localhost:8081/defineProcess", status, err.toString());
@@ -115,7 +114,7 @@ var name = e.target.name;
                     <input type="text" className="form-control" id="tagline" name="tagline" value={this.state.address} onChange={this.handleInputChange} placeholder="Process Description" />                    
                 </div>
             <div className="form-group" style={wellStyles}>
-                <label className="control-label" htmlFor="selcetion">Procesnng:</label>
+                <label className="control-label" htmlFor="selection">Procesnng:</label>
                      <select value={this.state.value} onChange={this.handleInputChange}>
                             <option value="AWS">AWS</option>
                             <option value="OnPrime">ONPRIME</option>
@@ -123,7 +122,6 @@ var name = e.target.name;
             </div>
                 <div className="form-group">
                     <button className="btn" onClick={this.addSchool} type="submit">Add Process</button>
-                    <button className="btn" onClick={this.handleClick.bind(this, 'chockers')} type="submit1">View Process</button>
                 </div>
                  
             </form>

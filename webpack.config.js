@@ -15,10 +15,16 @@ var config = {
             {
                 test : /\.jsx?/,
                 include : APP_DIR,
-                loader : 'babel'
+                loader : 'babel',
+         
             }
+          /*{
+      test: /\.json$/,
+      loader: 'json-loader',
+    },*/
         ]
     }
+  
 };
 
 module.exports = config;

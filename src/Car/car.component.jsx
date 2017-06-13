@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import SplitPane from 'react-split-pane';
+import Popup from 'react-popup';
+import Dropdown from 'react-dropdown'
+
 //var SplitPane=require('SplitPane');
   var $ = require ('jquery');
 
-
-        
 var moviearr=[];     
 
 class Car extends Component {
@@ -45,6 +46,8 @@ class Car extends Component {
         }
     }
     getProcessData(){
+        
+
                     $.ajax({
                     type: 'POST',
                     url: 'http://localhost:3000/getAllProcess',
@@ -66,20 +69,26 @@ class Car extends Component {
                 {
                          //console.log(moviearr[i]);
                 }
+
+
+
                 //console.log(moviearr);
                           
     }
     getComponent(event) {
-        event.preventDefault()
-    var el = event.target.value
-    console.log(el)
-      console.log('li item clicked!');
+        //event.preventDefault()
+       console.log(event.target.getAttribute('value'));
        
       //event.currentTarget.style.backgroundColor = '#ccc';
   }
+  _onSelect (option) {
+    console.log('You selected ', option.label)
+    this.setState({selected: option})
+  };
 
 
     render(){
+    
           const dropWarnStyle = {
             backgroundColor: 'yellow',
             left: 300,
@@ -97,11 +106,14 @@ class Car extends Component {
 
         // Get data from route props
         const cars = this.props.route.data;
+       
         //const numbers = [1, 2, 3, 4, 5]
         // Map through cars and return linked cars
          const listItems = moviearr.map((number) =>
-        <li onClick={this.getComponent.bind(this)} className="list-group-item">{number}</li>
+         
+        <li value={number} onClick={this.getComponent} className="list-group-item">{number}</li>
   );
+  
          const numbers = [1, 2, 3, 4, 6]
         // Map through cars and return linked cars
          const ProcessInstances = numbers.map((number) =>
@@ -109,11 +121,14 @@ class Car extends Component {
         return (
             <SplitPane  split="vertical" minSize={150} defaultSize={445}>
              
-            <div style={Object.assign({})}>
-            <h1>View Process and Logs</h1>
+            <div style={Object.assign({})} >
+            <h1>Process</h1>
                {listItems}
+            {/*<Dropdown listItems={moviearr}  onChange={this._onSelect} value={defaultOption} placeholder="Select an option" />*/}
+
            </div >
            <div style={Object.assign({})}>
+               <h1> Process Instances</h1>
             {ProcessInstances}
                </div>
         </SplitPane>
