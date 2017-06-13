@@ -38215,6 +38215,8 @@
 	var $ = __webpack_require__(247);
 
 	var moviearr = [];
+	var ProcessInstancesF = [];
+	var instanceLog = [];
 
 	var Car = function (_Component) {
 	    _inherits(Car, _Component);
@@ -38290,6 +38292,47 @@
 	            //console.log(moviearr);
 	        }
 	    }, {
+	        key: 'getProcessInstance',
+	        value: function getProcessInstance(event) {
+	            ProcessInstancesF = [];
+	            var data = { 'processName': event.target.getAttribute('value') };
+	            console.log(data);
+	            $.ajax({
+	                type: 'POST',
+	                url: 'http://localhost:3000/getProcessInstance',
+	                data: data,
+	                async: false,
+	                dataType: 'json',
+	                success: function success(data) {
+	                    for (var i = 0; i < data.length; i++) {
+	                        ProcessInstancesF[i] = data[i]._id;
+	                    }
+	                    console.log(ProcessInstancesF);
+	                }
+	            });
+	            this.forceUpdate();
+	        }
+	    }, {
+	        key: 'getInstanceLog',
+	        value: function getInstanceLog(event) {
+	            var data = { 'processInstanceId': event.target.getAttribute('value') };
+	            $.ajax({
+	                type: 'POST',
+	                url: 'http://localhost:3000/getInstanceLog',
+	                data: data,
+	                async: false,
+	                dataType: 'json',
+	                success: function success(data) {
+	                    for (var i = 0; i < data.length; i++) {
+	                        instanceLog[i] = data[i].LogDescription;
+	                    }
+
+	                    console.log(instanceLog);
+	                    alert("instanceLog");
+	                }
+	            });
+	        }
+	    }, {
 	        key: 'getComponent',
 	        value: function getComponent(event) {
 	            //event.preventDefault()
@@ -38330,17 +38373,17 @@
 	            var listItems = moviearr.map(function (number) {
 	                return _react2.default.createElement(
 	                    'li',
-	                    { value: number, onClick: _this3.getComponent, className: 'list-group-item' },
+	                    { value: number, onClick: _this3.getProcessInstance.bind(_this3), className: 'list-group-item' },
 	                    number
 	                );
 	            });
 
 	            var numbers = [1, 2, 3, 4, 6];
 	            // Map through cars and return linked cars
-	            var ProcessInstances = numbers.map(function (number) {
+	            var ProcessInstances = ProcessInstancesF.map(function (number) {
 	                return _react2.default.createElement(
 	                    'li',
-	                    { className: 'list-group-item' },
+	                    { value: number, onClick: _this3.getInstanceLog.bind(_this3), className: 'list-group-item' },
 	                    number
 	                );
 	            });

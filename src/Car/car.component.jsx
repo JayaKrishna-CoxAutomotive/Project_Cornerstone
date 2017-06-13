@@ -8,6 +8,8 @@ import Dropdown from 'react-dropdown'
   var $ = require ('jquery');
 
 var moviearr=[];     
+var ProcessInstancesF=[];
+var instanceLog=[]
 
 class Car extends Component {
     constructor(props) {
@@ -75,6 +77,47 @@ class Car extends Component {
                 //console.log(moviearr);
                           
     }
+   
+     getProcessInstance(event) {
+         ProcessInstancesF=[]
+        var data = { 'processName':event.target.getAttribute('value')};
+        console.log(data)
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/getProcessInstance',
+            data: data,
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+                for (let i = 0; i < data.length; i++) {
+                    ProcessInstancesF[i] = (data[i]._id);
+                }
+                console.log(ProcessInstancesF);
+            },
+        });
+        this.forceUpdate();
+    }
+
+    getInstanceLog(event) {
+        var data = { 'processInstanceId': event.target.getAttribute('value')};
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/getInstanceLog',
+            data: data,
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+                for (let i = 0; i < data.length; i++) {
+                    instanceLog[i] = (data[i].LogDescription);
+                }
+
+                console.log(instanceLog);
+                 alert ("instanceLog");
+            },
+        });
+    }
+
+
     getComponent(event) {
         //event.preventDefault()
        console.log(event.target.getAttribute('value'));
@@ -111,13 +154,13 @@ class Car extends Component {
         // Map through cars and return linked cars
          const listItems = moviearr.map((number) =>
          
-        <li value={number} onClick={this.getComponent} className="list-group-item">{number}</li>
+        <li value={number} onClick={this.getProcessInstance.bind(this)} className="list-group-item">{number}</li>
   );
   
          const numbers = [1, 2, 3, 4, 6]
         // Map through cars and return linked cars
-         const ProcessInstances = numbers.map((number) =>
-        <li  className="list-group-item">{number}</li>)
+         const ProcessInstances = ProcessInstancesF.map((number) =>
+        <li value={number} onClick={this.getInstanceLog.bind(this)} className="list-group-item">{number}</li>)
         return (
             <SplitPane  split="vertical" minSize={150} defaultSize={445}>
              

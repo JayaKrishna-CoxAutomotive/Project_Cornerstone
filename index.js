@@ -25,7 +25,17 @@ app.post('/getAllProcess', function(req, res) {
       res.json(result.data);
       });
 });
+app.post('/getProcessInstance', function (req, res) {
+    db.cypherQuery('MATCH (n:Process{ProcessName:"'+req.body.processName+'"})-[:INSTANCE_OF]-(pi:ProcessInstance) return pi', function (err, result) {
+        res.json(result.data);
+    });
+});
 
+app.post('/getInstanceLog', function (req, res) {
+    db.cypherQuery('MATCH (n:ProcessInstance)-[:LOGS_OF]-(pi:Log) where ID(n) = '+ req.body.processInstanceId +' return pi', function (err, result) {
+        res.json(result.data);
+    });
+});
 
 
 var neo4j = require('node-neo4j');
