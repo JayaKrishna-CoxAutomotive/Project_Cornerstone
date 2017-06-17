@@ -52,3 +52,9 @@ a.active{
     .Resizer.disabled:hover {
       border-color: transparent;
     }
+        .highlight {
+        background-color: #ffa;
+        -webkit-transition: background-color 0.2s linear;
+        -moz-transition: background-color 0.2s linear;
+        -o-transition: background-color 0.2s linear;
+    }

@@ -1,27 +1,58 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { Link } from 'react-router';
 import SplitPane from 'react-split-pane';
 import Popup from 'react-popup';
-import Dropdown from 'react-dropdown'
+import Dropdown from 'react-dropdown';
+import { Table, Column, Cell } from 'fixed-data-table';
+var classNames = require('classnames');
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+// or in ECMAScript 5 
+var ReactBSTable = require('react-bootstrap-table');
 
+var products = [{
+    id: 1,
+    name: "Product1",
+    price: 120
+}, {
+    id: 2,
+    name: "Product2",
+    price: 80
+}];
 //var SplitPane=require('SplitPane');
-  var $ = require ('jquery');
-
-var moviearr=[];     
-var ProcessInstancesF=[];
-var instanceLog=[]
+var $ = require('jquery');
+var lastActiveTool = ''
+var moviearr = [];
+var ProcessInstancesF = [];
+var ProcessInstance_Table = [];
+var instanceLog = []
+var n = '';
+var i= 0;
+var dataList = []
+//For the Table
 
 class Car extends Component {
-    constructor(props) {
-        super(props);
+
+
+    /*   constructor(props) {
+           super(props);
+           this.state = {
+               size: undefined,
+               dragging: false,
+           };
+           this.handleDragStart = this.handleDragStart.bind(this);
+           this.handleDragEnd = this.handleDragEnd.bind(this);
+           this.handleDrag = this.handleDrag.bind(this);
+       }*/
+    constructor() {
+        super()
         this.state = {
-            size: undefined,
-            dragging: false,
+            selectedCircle: {
+
+            },
         };
-        this.handleDragStart = this.handleDragStart.bind(this);
-        this.handleDragEnd = this.handleDragEnd.bind(this);
-        this.handleDrag = this.handleDrag.bind(this);
     }
+
 
     handleDragStart() {
         this.setState({
@@ -47,40 +78,33 @@ class Car extends Component {
             this.setState({ size: undefined });
         }
     }
-    getProcessData(){
-        
+    getProcessData() {
 
-                    $.ajax({
-                    type: 'POST',
-                    url: 'http://localhost:3000/getAllProcess',
-                    async : false,
-                    dataType : 'json',
-                    success: function (data){
-                        console.log("Hello")
-                        console.log(data[2].ProcessName);
-                        for(let i=1;i<10;i++){
-                            moviearr[i]=(data[i].ProcessName)
-                        };
-                        
-                    },
-                  
+        console.log("hey")
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/getAllProcess',
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+                //console.log("Hello")
+                //console.log(data[2].ProcessName);
+                for (let i = 0; i < data.length; i++) {
+                    moviearr[i] = (data[i].ProcessName)
+                };
 
-                });
-                console.log(moviearr.length);
-                for(let i=1;i<10;i++)
-                {
-                         //console.log(moviearr[i]);
-                }
+            },
 
 
+        });
 
-                //console.log(moviearr);
-                          
     }
-   
-     getProcessInstance(event) {
-         ProcessInstancesF=[]
-        var data = { 'processName':event.target.getAttribute('value')};
+    getIntialProcessInstance() {
+        var data = { 'processName': moviearr[0] };
+         var classHighlight = 'highlight';
+        $(this).addClass(classHighlight);
+        lastActiveTool = moviearr[0];
+        n = moviearr[0]
         console.log(data)
         $.ajax({
             type: 'POST',
@@ -90,16 +114,50 @@ class Car extends Component {
             dataType: 'json',
             success: function (data) {
                 for (let i = 0; i < data.length; i++) {
-                    ProcessInstancesF[i] = (data[i]._id);
+                    ProcessInstancesF[i] = ("Process Instance Id : " + data[i]._id + "  Start Time : " + data[i].StartTime + "   End Time :  " + data[i].EndTime);
+                     ProcessInstance_Table[i] = data[i];
                 }
-                console.log(ProcessInstancesF);
+                console.log("ProcessInstancesF");
             },
+        });
+    }
+
+    getProcessInstance(event) {   
+        ProcessInstancesF = []
+        ProcessInstance_Table=[]
+        n = event.target.getAttribute('value')
+        var data = { 'processName': event.target.getAttribute('value') };
+             
+        console.log(data)
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/getProcessInstance',
+            data: data,
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+                for (let i = 0; i < data.length; i++) {
+                    ProcessInstancesF[i] = ("Process Instance Id : " + data[i]._id + "  Start Time : " + data[i].StartTime + "   End Time :  " + data[i].EndTime);
+                    ProcessInstance_Table[i] = data[i];
+                }
+                //ProcessInstance_Table.push(data)
+                console.log("thought as json");
+                console.log(ProcessInstance_Table)
+                console.log(products)
+
+
+            }
+
+
         });
         this.forceUpdate();
     }
 
     getInstanceLog(event) {
-        var data = { 'processInstanceId': event.target.getAttribute('value')};
+        //var data = { 'processInstanceId': event.target.getAttribute('value')};
+        var list = event.target.getAttribute('value').split(" ");
+        console.log(list[4])
+        var data = { 'processInstanceId': list[4] };
         $.ajax({
             type: 'POST',
             url: 'http://localhost:3000/getInstanceLog',
@@ -108,11 +166,10 @@ class Car extends Component {
             dataType: 'json',
             success: function (data) {
                 for (let i = 0; i < data.length; i++) {
-                    instanceLog[i] = (data[i].LogDescription);
+                    instanceLog[i] = ("Log " + (i + 1) + " " + data[i].LogDescription);
                 }
-
-                console.log(instanceLog);
-                 alert ("instanceLog");
+                alert(instanceLog.join("\n"));
+                console.log(data);
             },
         });
     }
@@ -120,19 +177,54 @@ class Car extends Component {
 
     getComponent(event) {
         //event.preventDefault()
-       console.log(event.target.getAttribute('value'));
-       
-      //event.currentTarget.style.backgroundColor = '#ccc';
-  }
-  _onSelect (option) {
-    console.log('You selected ', option.label)
-    this.setState({selected: option})
-  };
+        console.log(event.target.getAttribute('value'));
+
+        //event.currentTarget.style.backgroundColor = '#ccc';
+    }
+    _onSelect(option) {
+        console.log('You selected ', option.label)
+        this.setState({ selected: option })
+    };
 
 
-    render(){
+
+    render() {
+        var options = {
+ onRowClick: function(row){
+     var list = row._id;
+        //console.log(list[4])
+        var data = { 'processInstanceId': list };
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/getInstanceLog',
+            data: data,
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+                for (let i = 0; i < data.length; i++) {
+                    instanceLog[i] = ("Log " + (i + 1) + " " + data[i].LogDescription);
+                }
+                alert(instanceLog.join("\n"));
+            },
+        });
     
-          const dropWarnStyle = {
+ }
+}
+        
+        var classHighlight = 'highlight';
+        var $thumbs = $('.list-group-item').click(function (e) {
+            e.preventDefault();
+            $thumbs.removeClass(classHighlight);
+            $(this).addClass(classHighlight);
+        });
+
+
+        var ulStyle = {
+            padding: '0px',
+            margin: '20px'
+        };
+
+        const dropWarnStyle = {
             backgroundColor: 'yellow',
             left: 300,
             width: 200,
@@ -145,58 +237,54 @@ class Car extends Component {
             height: '100%',
         };
         this.getProcessData();
-
+        if (i == 0) {
+            console.log("Intial Instance")
+            this.getIntialProcessInstance();
+            i++;
+        }
 
         // Get data from route props
         const cars = this.props.route.data;
-       
-        //const numbers = [1, 2, 3, 4, 5]
-        // Map through cars and return linked cars
-         const listItems = moviearr.map((number) =>
-         
-        <li value={number} onClick={this.getProcessInstance.bind(this)} className="list-group-item">{number}</li>
-  );
-  
-         const numbers = [1, 2, 3, 4, 6]
-        // Map through cars and return linked cars
-         const ProcessInstances = ProcessInstancesF.map((number) =>
-        <li value={number} onClick={this.getInstanceLog.bind(this)} className="list-group-item">{number}</li>)
-        return (
-            <SplitPane  split="vertical" minSize={150} defaultSize={445}>
-             
-            <div style={Object.assign({})} >
-            <h1>Process</h1>
-               {listItems}
-            {/*<Dropdown listItems={moviearr}  onChange={this._onSelect} value={defaultOption} placeholder="Select an option" />*/}
 
-           </div >
-           <div style={Object.assign({})}>
-               <h1> Process Instances</h1>
-            {ProcessInstances}
-               </div>
-        </SplitPane>
+       
+        // Map through cars and return linked data
+
+
+
+        const numbers = [1, 2, 3, 4, 6]
+        // Map through cars and return linked cars
+        const ProcessInstances = ProcessInstancesF.map((number) =>
+            <li value={number} onClick={this.getInstanceLog.bind(this)} className="list-group-item">{number}</li>)
+
+
+        const listItems = moviearr.map((number) =>
+
+            <li value={number} onClick={this.getProcessInstance.bind(this)} className="list-group-item">{number}</li>
+        );
         
-         /* <div style={{ height: '100%' }}>
-                <SplitPane
-                    size={this.state.dragging ? undefined : this.state.size}
-                    onChange={this.handleDrag}
-                    onDragStarted={this.handleDragStart}
-                    onDragFinished={this.handleDragEnd} split="vertical" minSize={50} defaultSize={100}
-                >
-                    <div style={{ backgroundColor: 'blue', height: '100%', zIndex: 1, opacity: 0.1 }} />
-                    <div />
-                </SplitPane>
-                <div style={Object.assign({}, centeredTextStyle, { left: 0, width: 300 })} className="list-group">
+        
+        return (
+            <SplitPane split="vertical" minSize={150} defaultSize={445}>
+
+                <div style={Object.assign({})} >
+                    <h1>Process Name {this.props.numbers}</h1>
                     {listItems}
+                    {/*<Dropdown listItems={moviearr}  onChange={this._onSelect} value={defaultOption} placeholder="Select an option" />*/}
+
+                </div >
+                <div style={Object.assign({})}>
+                    <h1> Process Instances of {n}</h1>
+                    {/*{ProcessInstances}*/}
+                    <BootstrapTable data={ProcessInstance_Table} options={ options } hover >
+                        <TableHeaderColumn dataField='_id' isKey>P_Inst Id</TableHeaderColumn>
+                        <TableHeaderColumn dataField='StartTime' >Start Time</TableHeaderColumn>
+                        <TableHeaderColumn dataField='EndTime'>End Time</TableHeaderColumn>
+                    </BootstrapTable>
+
                 </div>
-                <div style={Object.assign({}, centeredTextStyle, dropWarnStyle)}>
-                    Will snap to edges
-                </div>
-                <div style={Object.assign({}, centeredTextStyle, { left: 500, width: 'calc(100% - 500px)' })}>
-                    Can drop anywhere
-                </div>
-            </div>*/
- 
+            </SplitPane>
+
+
         );
     }
 }

@@ -1,10 +1,46 @@
 const express = require('express')
 const path = require('path')
 const port = process.env.PORT || 3000
+
 const app = express()
+
+var bodyParser = require( 'body-parser' );
+var dateFormat = require('dateformat');
+// initialize swagger-jsdoc
 var bodyParser = require('body-parser');
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+var subpath = express();
+app.use(bodyParser());
+/*////start swagger here
+var swaggerJSDoc = require('swagger-jsdoc');
+var swaggerDefinition = {
+  info: {
+    title: 'Node Swagger API',
+    version: '1.0.0',
+    description: 'Demonstrating how to describe a RESTful API with Swagger',
+  },
+  host: 'localhost:3000',
+  basePath: '/',
+};
+
+// options for the swagger docs
+var options = {
+  // import swaggerDefinitions
+  swaggerDefinition: swaggerDefinition,
+  // path to the API docs
+  apis: ['./routes/*.js'],
+};
+
+// initialize swagger-jsdoc
+var swaggerSpec = swaggerJSDoc(options);
+
+*/
+
+
+
+////////ends here
 //app.use(express.static(path.join(__dirname,"../app/dist")));
 // var express = require("express");
 // var path = require("path");
@@ -32,9 +68,17 @@ app.post('/getProcessInstance', function (req, res) {
 });
 
 app.post('/getInstanceLog', function (req, res) {
+   // console.log(req.body.)
     db.cypherQuery('MATCH (n:ProcessInstance)-[:LOGS_OF]-(pi:Log) where ID(n) = '+ req.body.processInstanceId +' return pi', function (err, result) {
+        console.log(err)
         res.json(result.data);
     });
+});
+
+// serve swagger
+app.get('/swagger.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
 });
 
 
@@ -106,16 +150,17 @@ app.post('/defineProcess', function(req, res) {
 //This will be called from Java library to create a Process instance for the Process
 app.post('/creatProcessInstance', function(req, res) {
     var dateTime = new Date();
-      db.insertNode({
-                    ProcessName: req.body.ProcessName,
-                    StartTime:dateTime,
-                    EndTime: " ",
-                    Status:  "Running"
-                }, 'ProcessInstance', function (err, result) {
-                    getProcessId(result); // This is used to get Internal Process id of the Process
-                    console.log("Process Instance has been assigned to the Process");
-                    res.json({ "ProcessInstanceId" : " " + result._id });
-                });   
+    var dateTime = dateFormat(dateTime, "ddd mmm d yyyy HH:MM:ss o (Z)");
+    db.insertNode({
+        ProcessName: req.body.ProcessName,
+        StartTime: dateTime,
+        EndTime: " ",
+        Status: "Running"
+    }, 'ProcessInstance', function (err, result) {
+        getProcessId(result); // This is used to get Internal Process id of the Process
+        console.log("Process Instance has been assigned to the Process");
+        res.json({ "ProcessInstanceId": " " + result._id });
+    });
 });
 
 //This will be called from Java library to update the status of the process instance

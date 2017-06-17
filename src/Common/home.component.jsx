@@ -53,7 +53,7 @@ handleClick(compName, e){
         this.setState({render:compName});        
       },
    
-addSchool:function(e){
+addProcess:function(e){
     e.preventDefault();
      //actions.addSchool(this.state);
 var name = e.target.name;
@@ -81,8 +81,8 @@ var name = e.target.name;
       BusinessUnit: '',
       Env:'',
       name:'',
-      address:''
-
+      address:'',
+tagline:''
     });
 },
     handleInputChange:function(e){
@@ -111,7 +111,7 @@ var name = e.target.name;
                 </div>
                 <div className="form-group">
                     <label className="control-label" htmlFor="tagline">Process Description:</label>
-                    <input type="text" className="form-control" id="tagline" name="tagline" value={this.state.address} onChange={this.handleInputChange} placeholder="Process Description" />                    
+                    <input type="text" className="form-control" id="tagline" name="tagline" value={this.state.tagline} onChange={this.handleInputChange} placeholder="Process Description" />                    
                 </div>
             <div className="form-group" style={wellStyles}>
                 <label className="control-label" htmlFor="selection">Procesnng:</label>
@@ -121,7 +121,7 @@ var name = e.target.name;
                     </select>
             </div>
                 <div className="form-group">
-                    <button className="btn" onClick={this.addSchool} type="submit">Add Process</button>
+                    <button className="btn" onClick={this.addProcess} type="submit">Add Process</button>
                 </div>
                  
             </form>
