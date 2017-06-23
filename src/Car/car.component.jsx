@@ -4,11 +4,10 @@ import { Link } from 'react-router';
 import SplitPane from 'react-split-pane';
 import Popup from 'react-popup';
 import Dropdown from 'react-dropdown';
-import { Table, Column, Cell } from 'fixed-data-table';
-var classNames = require('classnames');
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+
+var classNames = require('classnames');
 // or in ECMAScript 5 
-var ReactBSTable = require('react-bootstrap-table');
 
 var products = [{
     id: 1,
@@ -16,6 +15,42 @@ var products = [{
     price: 120
 }, {
     id: 2,
+    name: "Product2",
+    price: 80
+},{
+    id: 3,
+    name: "Product2",
+    price: 80
+},{
+    id: 4,
+    name: "Product2",
+    price: 80
+},{
+    id: 5,
+    name: "Product2",
+    price: 80
+},{
+    id: 1,
+    name: "Product1",
+    price: 120
+}, {
+    id: 2,
+    name: "Product2",
+    price: 80
+},{
+    id: 3,
+    name: "Product2",
+    price: 80
+},{
+    id: 4,
+    name: "Product2",
+    price: 80
+},{
+    id: 12,
+    name: "Product2",
+    price: 80
+},{
+    id: 11,
     name: "Product2",
     price: 80
 }];
@@ -27,7 +62,7 @@ var ProcessInstancesF = [];
 var ProcessInstance_Table = [];
 var instanceLog = []
 var n = '';
-var i= 0;
+var i = 0;
 var dataList = []
 //For the Table
 
@@ -43,9 +78,13 @@ class Car extends Component {
            this.handleDragStart = this.handleDragStart.bind(this);
            this.handleDragEnd = this.handleDragEnd.bind(this);
            this.handleDrag = this.handleDrag.bind(this);
+
        }*/
-    constructor() {
-        super()
+
+    constructor(props) {
+
+        super(props)
+
         this.state = {
             selectedCircle: {
 
@@ -101,7 +140,7 @@ class Car extends Component {
     }
     getIntialProcessInstance() {
         var data = { 'processName': moviearr[0] };
-         var classHighlight = 'highlight';
+        var classHighlight = 'highlight';
         $(this).addClass(classHighlight);
         lastActiveTool = moviearr[0];
         n = moviearr[0]
@@ -115,19 +154,19 @@ class Car extends Component {
             success: function (data) {
                 for (let i = 0; i < data.length; i++) {
                     ProcessInstancesF[i] = ("Process Instance Id : " + data[i]._id + "  Start Time : " + data[i].StartTime + "   End Time :  " + data[i].EndTime);
-                     ProcessInstance_Table[i] = data[i];
+                    ProcessInstance_Table[i] = data[i];
                 }
                 console.log("ProcessInstancesF");
             },
         });
     }
 
-    getProcessInstance(event) {   
+    getProcessInstance(event) {
         ProcessInstancesF = []
-        ProcessInstance_Table=[]
+        ProcessInstance_Table = []
         n = event.target.getAttribute('value')
         var data = { 'processName': event.target.getAttribute('value') };
-             
+
         console.log(data)
         $.ajax({
             type: 'POST',
@@ -190,27 +229,27 @@ class Car extends Component {
 
     render() {
         var options = {
- onRowClick: function(row){
-     var list = row._id;
-        //console.log(list[4])
-        var data = { 'processInstanceId': list };
-        $.ajax({
-            type: 'POST',
-            url: 'http://localhost:3000/getInstanceLog',
-            data: data,
-            async: false,
-            dataType: 'json',
-            success: function (data) {
-                for (let i = 0; i < data.length; i++) {
-                    instanceLog[i] = ("Log " + (i + 1) + " " + data[i].LogDescription);
-                }
-                alert(instanceLog.join("\n"));
-            },
-        });
-    
- }
-}
-        
+            onRowClick: function (row) {
+                var list = row._id;
+                //console.log(list[4])
+                var data = { 'processInstanceId': list };
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:3000/getInstanceLog',
+                    data: data,
+                    async: false,
+                    dataType: 'json',
+                    success: function (data) {
+                        for (let i = 0; i < data.length; i++) {
+                            instanceLog[i] = ("Log " + (i + 1) + " " + data[i].LogDescription);
+                        }
+                        alert(instanceLog.join("\n"));
+                    },
+                });
+
+            }
+        }
+
         var classHighlight = 'highlight';
         var $thumbs = $('.list-group-item').click(function (e) {
             e.preventDefault();
@@ -246,7 +285,7 @@ class Car extends Component {
         // Get data from route props
         const cars = this.props.route.data;
 
-       
+
         // Map through cars and return linked data
 
 
@@ -261,8 +300,8 @@ class Car extends Component {
 
             <li value={number} onClick={this.getProcessInstance.bind(this)} className="list-group-item">{number}</li>
         );
-        
-        
+
+
         return (
             <SplitPane split="vertical" minSize={150} defaultSize={445}>
 
@@ -272,11 +311,11 @@ class Car extends Component {
                     {/*<Dropdown listItems={moviearr}  onChange={this._onSelect} value={defaultOption} placeholder="Select an option" />*/}
 
                 </div >
-                <div style={Object.assign({})}>
+                <div  >
                     <h1> Process Instances of {n}</h1>
                     {/*{ProcessInstances}*/}
-                    <BootstrapTable data={ProcessInstance_Table} options={ options } hover >
-                        <TableHeaderColumn dataField='_id' isKey>P_Inst Id</TableHeaderColumn>
+                      <BootstrapTable data={ProcessInstance_Table} hover options={options} >
+                        <TableHeaderColumn dataField='_id' isKey={ true }>P_Inst Id</TableHeaderColumn>
                         <TableHeaderColumn dataField='StartTime' >Start Time</TableHeaderColumn>
                         <TableHeaderColumn dataField='EndTime'>End Time</TableHeaderColumn>
                     </BootstrapTable>

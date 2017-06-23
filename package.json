@@ -42,7 +42,7 @@
     "neo4j": "^2.0.0-RC2",
     "neo4j-driver": "*",
     "react": "^15.5.4",
-    "react-bootstrap-table": "^3.4.0",
+    "react-bootstrap-table": "^3.4.1",
     "react-dom": "^15.5.4",
     "react-dropdown": "^1.2.5",
     "react-popup": "^0.8.0",

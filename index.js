@@ -13,39 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 var subpath = express();
 app.use(bodyParser());
-/*////start swagger here
-var swaggerJSDoc = require('swagger-jsdoc');
-var swaggerDefinition = {
-  info: {
-    title: 'Node Swagger API',
-    version: '1.0.0',
-    description: 'Demonstrating how to describe a RESTful API with Swagger',
-  },
-  host: 'localhost:3000',
-  basePath: '/',
-};
 
-// options for the swagger docs
-var options = {
-  // import swaggerDefinitions
-  swaggerDefinition: swaggerDefinition,
-  // path to the API docs
-  apis: ['./routes/*.js'],
-};
-
-// initialize swagger-jsdoc
-var swaggerSpec = swaggerJSDoc(options);
-
-*/
-
-
-
-////////ends here
-//app.use(express.static(path.join(__dirname,"../app/dist")));
-// var express = require("express");
-// var path = require("path");
-// var bodyParser = require('body-parser');
-// var app = express();
 console.log("came")
 // serve static assets normally
 app.use(express.static(__dirname + '/public'))
@@ -58,6 +26,11 @@ app.get('*', function (request, response){
 
 app.post('/getAllProcess', function(req, res) {
           db.cypherQuery('MATCH (n:Process) return n', function (err, result) {
+      res.json(result.data);
+      });
+});
+app.post('/getEnvironment', function(req, res) {
+          db.cypherQuery('MATCH (n:Environment) return n', function (err, result) {
       res.json(result.data);
       });
 });
@@ -135,6 +108,17 @@ db = new neo4j('http://neo4j:OMSAIRAM@faith1@0.0.0.0:7474');
 ///ended my code here
 
 //This will be called from the frontend and will be used to create process node.
+app.post('/CreateEnvironment', function(req, res) {
+    console.log(req)
+    console.log("vampire")
+    console.log(req.body.description)
+      db.insertNode({
+                    Name:req.body.description,
+                }, 'Environment', function (err, result) {
+                  console.log("Environment with name " + result.Name + " has been created.");
+                });
+    res.json({ message: 'Process has been created' });   
+});
 app.post('/defineProcess', function(req, res) {
       db.insertNode({
                     ProcessName: req.body.description.name,
@@ -144,7 +128,7 @@ app.post('/defineProcess', function(req, res) {
                 }, 'Process', function (err, result) {
                   console.log("Process with name " + result.ProcessName + " has been created.");
                 });
-    res.json({ message: 'Hurrah! Process has been created' });   
+    res.json({ message: 'Process has been created' });   
 });
 
 //This will be called from Java library to create a Process instance for the Process
