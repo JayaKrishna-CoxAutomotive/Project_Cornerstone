@@ -38085,7 +38085,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -38113,141 +38113,162 @@
 	var i = 0;
 
 	var products = [{
-	  id: 3,
-	  name: "Product1",
-	  price: 120
+	    id: 3,
+	    name: "Product1",
+	    price: 120
 	}, {
-	  id: 2,
-	  name: "Product2",
-	  price: 80
+	    id: 2,
+	    name: "Product2",
+	    price: 80
 	}];
 
-	var ActionFormatter = function (_React$Component) {
-	  _inherits(ActionFormatter, _React$Component);
-
-	  function ActionFormatter() {
-	    _classCallCheck(this, ActionFormatter);
-
-	    return _possibleConstructorReturn(this, (ActionFormatter.__proto__ || Object.getPrototypeOf(ActionFormatter)).apply(this, arguments));
-	  }
-
-	  _createClass(ActionFormatter, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'button',
-	        { className: 'btn btn-info' },
-	        'Action'
-	      );
-	    }
-	  }]);
-
-	  return ActionFormatter;
-	}(_react2.default.Component);
-
-	function actionFormatter(cell, row) {
-	  return _react2.default.createElement(ActionFormatter, null);
-	}
-	function onAfterInsertRow(row) {
-	  var newRowStr = '';
-	  var puEnv = [];
-
-	  for (var prop in row) {
-	    newRowStr += prop + ': ' + row[prop] + ' \n';
-	    puEnv = row[prop];
-	  }
-	  console.log("kjfnfjk");
-	  console.log(puEnv);
-	  var lookup = {
-
-	    'description': puEnv
-	  };
-	  $.ajax({
-	    url: "http://localhost:3000/CreateEnvironment",
-	    dataType: 'json',
-	    type: 'POST',
-	    contentType: 'application/json',
-	    data: JSON.stringify(lookup),
-	    success: function (data) {
-	      //We set the state again after submission, to update with the submitted data
-	      //this.setState({data: data});
-	      console.log(data);
-	    }.bind(this),
-	    error: function (xhr, status, err) {
-	      console.error("http://localhost:3000/CreateEnvironment", status, err.toString());
-	    }.bind(this)
-	  });
-	  alert('The new row is:\n ' + newRowStr);
-	}
-
-	var About = function (_Component) {
-	  _inherits(About, _Component);
-
-	  function About(props) {
-	    _classCallCheck(this, About);
-
-	    return _possibleConstructorReturn(this, (About.__proto__ || Object.getPrototypeOf(About)).call(this, props));
-	  }
-
-	  _createClass(About, [{
-	    key: 'getEnvList',
-	    value: function getEnvList() {
-	      console.log("about");
-
-	      $.ajax({
+	function addProducts(quantity) {
+	    $.ajax({
 	        async: "false",
 	        url: "http://localhost:3000/getEnvironment",
 	        dataType: 'json',
 	        type: 'POST',
 	        contentType: 'application/json',
 	        success: function success(data) {
-	          Env = [];
-	          for (var i = 0; i < data.length; i++) {
-	            Env.push({
-	              name: '' + data[i].Name
-	            });
-	          }
-	          console.log(Env);
+	            Env = [];
+	            for (var i = 0; i < data.length; i++) {
+	                Env.push({
+	                    name: '' + data[i].Name
+	                });
+	            }
+	            console.log(Env);
 	        }
-	      });
+	    });
+	}
+
+	addProducts(1);
+
+	var ActionFormatter = function (_React$Component) {
+	    _inherits(ActionFormatter, _React$Component);
+
+	    function ActionFormatter() {
+	        _classCallCheck(this, ActionFormatter);
+
+	        return _possibleConstructorReturn(this, (ActionFormatter.__proto__ || Object.getPrototypeOf(ActionFormatter)).apply(this, arguments));
 	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
 
-	      var options = {
-	        afterInsertRow: onAfterInsertRow // A hook for after insert rows
-	      };
+	    _createClass(ActionFormatter, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'button',
+	                { className: 'btn btn-info' },
+	                'Action'
+	            );
+	        }
+	    }]);
 
-	      if (i == 0) {
-	        console.log("Intial Instance");
-	        this.getEnvList();
-	      }
-	      // this.getEnvironment()
+	    return ActionFormatter;
+	}(_react2.default.Component);
 
+	function actionFormatter(cell, row) {
+	    return _react2.default.createElement(ActionFormatter, null);
+	}
+	function onAfterInsertRow(row) {
+	    var that = this;
+	    var newRowStr = '';
+	    var puEnv = [];
 
-	      var numbers = [1, 2, 3, 4, 6];
-	      // Map through cars and return linked cars
-	      var ProcessInstances = numbers.map(function (number) {
-	        return _react2.default.createElement(
-	          'li',
-	          { value: number, className: 'list-group-item' },
-	          number
-	        );
-	      });
-	      return _react2.default.createElement(
-	        _reactBootstrapTable.BootstrapTable,
-	        { data: Env, insertRow: true, options: options },
-	        _react2.default.createElement(
-	          _reactBootstrapTable.TableHeaderColumn,
-	          { dataField: 'name', isKey: true },
-	          'Account'
-	        )
-	      );
+	    for (var prop in row) {
+	        newRowStr += prop + ': ' + row[prop] + ' \n';
+	        puEnv = row[prop];
 	    }
-	  }]);
+	    console.log("kjfnfjk");
+	    console.log(puEnv);
+	    var lookup = {
 
-	  return About;
+	        'description': puEnv
+	    };
+	    $.ajax({
+	        url: "http://localhost:3000/CreateEnvironment",
+	        dataType: 'json',
+	        type: 'POST',
+	        contentType: 'application/json',
+	        data: JSON.stringify(lookup),
+	        success: function (data) {
+	            //We set the state again after submission, to update with the submitted data
+	            //this.setState({data: data});
+	            console.log(data);
+	        }.bind(this),
+	        error: function (xhr, status, err) {
+	            console.error("http://localhost:3000/CreateEnvironment", status, err.toString());
+	        }.bind(this)
+	    });
+	    addProducts(1);
+	    alert('The new row is:\n ' + newRowStr);
+	}
+
+	var About = function (_Component) {
+	    _inherits(About, _Component);
+
+	    function About(props) {
+	        _classCallCheck(this, About);
+
+	        return _possibleConstructorReturn(this, (About.__proto__ || Object.getPrototypeOf(About)).call(this, props));
+	    }
+
+	    _createClass(About, [{
+	        key: 'getEnvList',
+	        value: function getEnvList() {
+	            console.log("about");
+
+	            $.ajax({
+	                async: "false",
+	                url: "http://localhost:3000/getEnvironment",
+	                dataType: 'json',
+	                type: 'POST',
+	                contentType: 'application/json',
+	                success: function success(data) {
+	                    Env = [];
+	                    for (var i = 0; i < data.length; i++) {
+	                        Env.push({
+	                            name: '' + data[i].Name
+	                        });
+	                    }
+	                    console.log(Env);
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            var options = {
+	                afterInsertRow: onAfterInsertRow // A hook for after insert rows
+	            };
+
+	            //this.getEnvList();
+
+	            // this.getEnvironment()
+
+
+	            var numbers = [1, 2, 3, 4, 6];
+	            // Map through cars and return linked cars
+	            var ProcessInstances = numbers.map(function (number) {
+	                return _react2.default.createElement(
+	                    'li',
+	                    { value: number, className: 'list-group-item' },
+	                    number
+	                );
+	            });
+	            return _react2.default.createElement(
+	                _reactBootstrapTable.BootstrapTable,
+	                { data: Env, insertRow: true, options: options },
+	                _react2.default.createElement(
+	                    _reactBootstrapTable.TableHeaderColumn,
+	                    { dataField: 'name', isKey: true },
+	                    'Account'
+	                )
+	            );
+	        }
+	    }]);
+
+	    return About;
 	}(_react.Component);
 
 	exports.default = About;
@@ -81505,7 +81526,7 @@
 	                    ),
 	                    _react2.default.createElement(
 	                        _reactBootstrapTable.BootstrapTable,
-	                        { data: ProcessInstance_Table, hover: true, options: options },
+	                        { data: ProcessInstance_Table, hover: true, options: options, pagination: true },
 	                        _react2.default.createElement(
 	                            _reactBootstrapTable.TableHeaderColumn,
 	                            { dataField: '_id', isKey: true },

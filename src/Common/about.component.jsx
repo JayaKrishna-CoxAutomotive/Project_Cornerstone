@@ -15,8 +15,27 @@ var products = [{
     price: 80
 }, ];
 
+function addProducts(quantity) {
+  $.ajax({
+            async: "false",
+            url: "http://localhost:3000/getEnvironment",
+            dataType: 'json',
+            type: 'POST',
+            contentType: 'application/json',
+            success: function (data) {
+                Env=[]
+                for (var i = 0; i < data.length; i++) {
+                    Env.push({
+                        name: '' + data[i].Name,
+                    });
+                }
+                console.log(Env)
+                 
+            }
+        });
+}
 
-
+   addProducts(1);
 class ActionFormatter extends React.Component {
 
   render() {
@@ -29,6 +48,7 @@ function actionFormatter(cell, row) {
   return <ActionFormatter />;
 }
     function onAfterInsertRow(row) {
+         var that = this;
   let newRowStr = '';
   let puEnv=[]
 
@@ -57,7 +77,9 @@ function actionFormatter(cell, row) {
         console.error("http://localhost:3000/CreateEnvironment", status, err.toString());
       }.bind(this)
     });
+      addProducts(1);
   alert('The new row is:\n ' + newRowStr);
+  
 }
 class About extends Component {
 
@@ -97,10 +119,9 @@ var options = {
   afterInsertRow: onAfterInsertRow   // A hook for after insert rows
 };
   
-   if (i == 0) {
-            console.log("Intial Instance")
-            this.getEnvList();
-   } 
+  
+   //this.getEnvList();
+
        // this.getEnvironment()
   
         

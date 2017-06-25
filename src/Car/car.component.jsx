@@ -314,7 +314,7 @@ class Car extends Component {
                 <div  >
                     <h1> Process Instances of {n}</h1>
                     {/*{ProcessInstances}*/}
-                      <BootstrapTable data={ProcessInstance_Table} hover options={options} >
+                      <BootstrapTable data={ProcessInstance_Table} hover options={options} pagination>
                         <TableHeaderColumn dataField='_id' isKey={ true }>P_Inst Id</TableHeaderColumn>
                         <TableHeaderColumn dataField='StartTime' >Start Time</TableHeaderColumn>
                         <TableHeaderColumn dataField='EndTime'>End Time</TableHeaderColumn>
