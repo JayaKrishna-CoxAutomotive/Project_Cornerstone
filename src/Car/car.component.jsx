@@ -5,6 +5,10 @@ import SplitPane from 'react-split-pane';
 import Popup from 'react-popup';
 import Dropdown from 'react-dropdown';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { TablePagination } from 'react-pagination-table';
+
+
+
 
 var classNames = require('classnames');
 // or in ECMAScript 5 
@@ -17,19 +21,19 @@ var products = [{
     id: 2,
     name: "Product2",
     price: 80
-},{
+}, {
     id: 3,
     name: "Product2",
     price: 80
-},{
+}, {
     id: 4,
     name: "Product2",
     price: 80
-},{
+}, {
     id: 5,
     name: "Product2",
     price: 80
-},{
+}, {
     id: 1,
     name: "Product1",
     price: 120
@@ -37,19 +41,19 @@ var products = [{
     id: 2,
     name: "Product2",
     price: 80
-},{
+}, {
     id: 3,
     name: "Product2",
     price: 80
-},{
+}, {
     id: 4,
     name: "Product2",
     price: 80
-},{
+}, {
     id: 12,
     name: "Product2",
     price: 80
-},{
+}, {
     id: 11,
     name: "Product2",
     price: 80
@@ -300,8 +304,30 @@ class Car extends Component {
 
             <li value={number} onClick={this.getProcessInstance.bind(this)} className="list-group-item">{number}</li>
         );
-
-
+        const Header = ["P_Inst Id", "Start Time", "End Time"];
+        const data = [{
+            name: 'Tanner Linsley',
+            age: 26,
+            friend: {
+                name: 'Jason Maurer',
+                age: 23,
+            }
+        }]
+        const columns = [{
+            Header: 'Name',
+            accessor: 'name' // String-based value accessors!
+        }, {
+            Header: 'Age',
+            accessor: 'age',
+            Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+        }, {
+            id: 'friendName', // Required because our accessor is not a string
+            Header: 'Friend Name',
+            accessor: d => d.friend.name // Custom value accessors!
+        }, {
+            Header: props => <span>Friend Age</span>, // Custom header components!
+            accessor: 'friend.age'
+        }]
         return (
             <SplitPane split="vertical" minSize={150} defaultSize={445}>
 
@@ -314,12 +340,16 @@ class Car extends Component {
                 <div  >
                     <h1> Process Instances of {n}</h1>
                     {/*{ProcessInstances}*/}
-                      <BootstrapTable data={ProcessInstance_Table} hover options={options} pagination>
-                        <TableHeaderColumn dataField='_id' isKey={ true }>P_Inst Id</TableHeaderColumn>
+                    <BootstrapTable data={ProcessInstance_Table} hover options={options} pagination>
+                        <TableHeaderColumn dataField='_id' isKey={true}>P_Inst Id</TableHeaderColumn>
                         <TableHeaderColumn dataField='StartTime' >Start Time</TableHeaderColumn>
                         <TableHeaderColumn dataField='EndTime'>End Time</TableHeaderColumn>
                     </BootstrapTable>
-
+                    {/* 
+                    <ReactTable
+                        data={data}
+                        columns={columns}
+                    />*/}
                 </div>
             </SplitPane>
 
