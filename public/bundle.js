@@ -38111,6 +38111,8 @@
 	var $ = __webpack_require__(247);
 	var Env = [];
 	var i = 0;
+	var MAX_HEIGHT = 600;
+	var ROW_HEIGHT = 42;
 
 	var products = [{
 	    id: 3,
@@ -38272,7 +38274,9 @@
 	            //this.getEnvList();
 	            addProducts(1);
 	            var selectRowProp = {
-	                mode: 'checkbox'
+	                mode: 'checkbox',
+	                bgColor: 'pink',
+	                showOnlySelected: true
 	            };
 	            var options = {
 	                afterInsertRow: onAfterInsertRow,
@@ -38293,7 +38297,7 @@
 	                null,
 	                _react2.default.createElement(
 	                    _reactBootstrapTable.BootstrapTable,
-	                    { data: Env, insertRow: true, deleteRow: true, selectRow: selectRowProp, options: options, search: true },
+	                    { data: Env, height: String(Math.min([MAX_HEIGHT, (Env.length + 1) * ROW_HEIGHT])), insertRow: true, deleteRow: true, selectRow: selectRowProp, options: options, search: true, hover: true, pagination: true },
 	                    _react2.default.createElement(
 	                        _reactBootstrapTable.TableHeaderColumn,
 	                        { dataField: 'name', isKey: true },

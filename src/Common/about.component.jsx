@@ -4,6 +4,8 @@ import SplitPane from 'react-split-pane';
 var $ = require('jquery');
 var Env = [];
 var i = 0;
+const MAX_HEIGHT = 600;
+const ROW_HEIGHT = 42;
 
 var products = [{
     id: 3,
@@ -82,19 +84,19 @@ function onAfterInsertRow(row) {
             console.error("http://localhost:3000/CreateEnvironment", status, err.toString());
         }.bind(this)
     });
-    
+
     //addProducts(1);
     alert('The new row is:\n ' + newRowStr);
 
 }
 
 function customConfirm(next, dropRowKeys) {
-  const dropRowKeysStr = dropRowKeys.join(',');
-  var lookup = {
+    const dropRowKeysStr = dropRowKeys.join(',');
+    var lookup = {
 
         'description': dropRowKeysStr,
     }
-  console.log(dropRowKeysStr)
+    console.log(dropRowKeysStr)
     $.ajax({
         url: "http://localhost:3000/DeleteEnvironment",
         dataType: 'json',
@@ -110,11 +112,11 @@ function customConfirm(next, dropRowKeys) {
             console.error("http://localhost:3000/DeleteEnvironment", status, err.toString());
         }.bind(this)
     });
-  if (confirm(`Are you sure you want to delete ${dropRowKeysStr}?`)) {
-    // If the confirmation is true, call the function that
-    // continues the deletion of the record.
-    next();
-  }
+    if (confirm(`Are you sure you want to delete ${dropRowKeysStr}?`)) {
+        // If the confirmation is true, call the function that
+        // continues the deletion of the record.
+        next();
+    }
 }
 
 class About extends Component {
@@ -150,10 +152,12 @@ class About extends Component {
     render() {
 
         //this.getEnvList();
-       addProducts(1);
-       const selectRowProp = {
-  mode: 'checkbox'
-};
+        addProducts(1);
+        const selectRowProp = {
+            mode: 'checkbox',
+            bgColor: 'pink',
+            showOnlySelected: true
+        };
         var options = {
             afterInsertRow: onAfterInsertRow,
             handleConfirmDeleteRow: customConfirm  // A hook for after insert rows
@@ -165,9 +169,9 @@ class About extends Component {
             <li value={number} className="list-group-item">{number}</li>)
         return (
             <div>
-            <BootstrapTable data={Env} insertRow={true} deleteRow={ true } selectRow={ selectRowProp } options={options} search={ true }>
-                <TableHeaderColumn dataField='name' isKey={true}>Account</TableHeaderColumn>
-            </BootstrapTable>
+                <BootstrapTable data={Env} height={String(Math.min([MAX_HEIGHT, (Env.length + 1) * ROW_HEIGHT]))} insertRow={true} deleteRow={true} selectRow={selectRowProp} options={options} search={true} hover pagination>
+                    <TableHeaderColumn dataField='name' isKey={true}>Account</TableHeaderColumn>
+                </BootstrapTable>
             </div>
         );
     }
