@@ -38169,6 +38169,7 @@
 	function actionFormatter(cell, row) {
 	    return _react2.default.createElement(ActionFormatter, null);
 	}
+
 	function onAfterInsertRow(row) {
 	    var that = this;
 	    var newRowStr = '';
@@ -38199,16 +38200,36 @@
 	            console.error("http://localhost:3000/CreateEnvironment", status, err.toString());
 	        }.bind(this)
 	    });
+
 	    //addProducts(1);
 	    alert('The new row is:\n ' + newRowStr);
 	}
 
 	function customConfirm(next, dropRowKeys) {
 	    var dropRowKeysStr = dropRowKeys.join(',');
+	    var lookup = {
+
+	        'description': dropRowKeysStr
+	    };
+	    console.log(dropRowKeysStr);
+	    $.ajax({
+	        url: "http://localhost:3000/DeleteEnvironment",
+	        dataType: 'json',
+	        type: 'POST',
+	        contentType: 'application/json',
+	        data: JSON.stringify(lookup),
+	        success: function (data) {
+	            //We set the state again after submission, to update with the submitted data
+	            //this.setState({data: data});
+	            console.log(data);
+	        }.bind(this),
+	        error: function (xhr, status, err) {
+	            console.error("http://localhost:3000/DeleteEnvironment", status, err.toString());
+	        }.bind(this)
+	    });
 	    if (confirm('Are you sure you want to delete ' + dropRowKeysStr + '?')) {
 	        // If the confirmation is true, call the function that
 	        // continues the deletion of the record.
-
 	        next();
 	    }
 	}
@@ -38272,7 +38293,7 @@
 	                null,
 	                _react2.default.createElement(
 	                    _reactBootstrapTable.BootstrapTable,
-	                    { data: Env, insertRow: true, deleteRow: true, selectRow: selectRowProp, options: options },
+	                    { data: Env, insertRow: true, deleteRow: true, selectRow: selectRowProp, options: options, search: true },
 	                    _react2.default.createElement(
 	                        _reactBootstrapTable.TableHeaderColumn,
 	                        { dataField: 'name', isKey: true },
@@ -81438,11 +81459,23 @@
 	            this.setState({ selected: option });
 	        }
 	    }, {
+	        key: 'handleBtnClick',
+	        value: function handleBtnClick() {
+	            if (order === 'desc') {
+	                this.refs.table.handleSort('asc', 'name');
+	                order = 'asc';
+	            } else {
+	                this.refs.table.handleSort('desc', 'name');
+	                order = 'desc';
+	            }
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this3 = this;
 
 	            var options = {
+	                sortIndicator: false,
 	                onRowClick: function onRowClick(row) {
 	                    var list = row._id;
 	                    //console.log(list[4])
@@ -81580,20 +81613,20 @@
 	                    ),
 	                    _react2.default.createElement(
 	                        _reactBootstrapTable.BootstrapTable,
-	                        { data: ProcessInstance_Table, hover: true, options: options, pagination: true },
+	                        { data: ProcessInstance_Table, hover: true, options: options, pagination: true, exportCSV: true },
 	                        _react2.default.createElement(
 	                            _reactBootstrapTable.TableHeaderColumn,
-	                            { dataField: '_id', isKey: true },
+	                            { dataField: '_id', isKey: true, dataSort: true, dataAlign: 'center' },
 	                            'P_Inst Id'
 	                        ),
 	                        _react2.default.createElement(
 	                            _reactBootstrapTable.TableHeaderColumn,
-	                            { dataField: 'StartTime' },
+	                            { dataField: 'StartTime', dataSort: true },
 	                            'Start Time'
 	                        ),
 	                        _react2.default.createElement(
 	                            _reactBootstrapTable.TableHeaderColumn,
-	                            { dataField: 'EndTime' },
+	                            { dataField: 'EndTime', dataSort: true },
 	                            'End Time'
 	                        )
 	                    )

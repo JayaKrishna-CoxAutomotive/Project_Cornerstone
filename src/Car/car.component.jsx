@@ -229,10 +229,19 @@ class Car extends Component {
         this.setState({ selected: option })
     };
 
-
+ handleBtnClick(){
+    if (order === 'desc') {
+      this.refs.table.handleSort('asc', 'name');
+      order = 'asc';
+    } else {
+      this.refs.table.handleSort('desc', 'name');
+      order = 'desc';
+    }
+  }
 
     render() {
         var options = {
+            sortIndicator: false ,
             onRowClick: function (row) {
                 var list = row._id;
                 //console.log(list[4])
@@ -340,10 +349,10 @@ class Car extends Component {
                 <div  >
                     <h1> Process Instances of {n}</h1>
                     {/*{ProcessInstances}*/}
-                    <BootstrapTable data={ProcessInstance_Table} hover options={options} pagination>
-                        <TableHeaderColumn dataField='_id' isKey={true}>P_Inst Id</TableHeaderColumn>
-                        <TableHeaderColumn dataField='StartTime' >Start Time</TableHeaderColumn>
-                        <TableHeaderColumn dataField='EndTime'>End Time</TableHeaderColumn>
+                    <BootstrapTable data={ProcessInstance_Table} hover options={options} pagination exportCSV={ true }> 
+                        <TableHeaderColumn dataField='_id' isKey={true} dataSort={ true } dataAlign='center'>P_Inst Id</TableHeaderColumn>
+                        <TableHeaderColumn dataField='StartTime'  dataSort={ true }>Start Time</TableHeaderColumn>
+                        <TableHeaderColumn dataField='EndTime' dataSort={ true }>End Time</TableHeaderColumn>
                     </BootstrapTable>
                     {/* 
                     <ReactTable

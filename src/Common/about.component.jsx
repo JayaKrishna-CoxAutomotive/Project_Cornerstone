@@ -45,9 +45,13 @@ class ActionFormatter extends React.Component {
         );
     }
 }
+
+
 function actionFormatter(cell, row) {
     return <ActionFormatter />;
 }
+
+
 function onAfterInsertRow(row) {
     var that = this;
     let newRowStr = '';
@@ -78,6 +82,7 @@ function onAfterInsertRow(row) {
             console.error("http://localhost:3000/CreateEnvironment", status, err.toString());
         }.bind(this)
     });
+    
     //addProducts(1);
     alert('The new row is:\n ' + newRowStr);
 
@@ -85,10 +90,29 @@ function onAfterInsertRow(row) {
 
 function customConfirm(next, dropRowKeys) {
   const dropRowKeysStr = dropRowKeys.join(',');
+  var lookup = {
+
+        'description': dropRowKeysStr,
+    }
+  console.log(dropRowKeysStr)
+    $.ajax({
+        url: "http://localhost:3000/DeleteEnvironment",
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(lookup),
+        success: function (data) {
+            //We set the state again after submission, to update with the submitted data
+            //this.setState({data: data});
+            console.log(data);
+        }.bind(this),
+        error: function (xhr, status, err) {
+            console.error("http://localhost:3000/DeleteEnvironment", status, err.toString());
+        }.bind(this)
+    });
   if (confirm(`Are you sure you want to delete ${dropRowKeysStr}?`)) {
     // If the confirmation is true, call the function that
     // continues the deletion of the record.
-    
     next();
   }
 }
@@ -141,7 +165,7 @@ class About extends Component {
             <li value={number} className="list-group-item">{number}</li>)
         return (
             <div>
-            <BootstrapTable data={Env} insertRow={true} deleteRow={ true } selectRow={ selectRowProp } options={options} >
+            <BootstrapTable data={Env} insertRow={true} deleteRow={ true } selectRow={ selectRowProp } options={options} search={ true }>
                 <TableHeaderColumn dataField='name' isKey={true}>Account</TableHeaderColumn>
             </BootstrapTable>
             </div>

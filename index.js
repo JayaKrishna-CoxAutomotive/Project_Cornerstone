@@ -30,7 +30,7 @@ app.post('/getAllProcess', function(req, res) {
       });
 });
 app.post('/getEnvironment', function(req, res) {
-          db.cypherQuery('MATCH (n:Environment) return n', function (err, result) {
+          db.cypherQuery('MATCH (n:Environment) WHERE n.State = "Active" return n', function (err, result) {
       res.json(result.data);
       });
 });
@@ -120,6 +120,15 @@ app.post('/CreateEnvironment', function(req, res) {
                   console.log("Environment with name " + result.Name + " has been created.");
                 });
     res.json({ message: 'Process has been created' });   
+});
+
+    app.post('/DeleteEnvironment', function(req, res) {
+        console.log("server"+req.body.description)
+        db.cypherQuery('MATCH (n:Environment) Where n.Name="' + req.body.description + '" SET n.State = "InActive"', function(err, result) {
+        console.log(err)
+        //res.json(result.data);
+    });
+      
 });
 app.post('/defineProcess', function(req, res) {
       db.insertNode({
