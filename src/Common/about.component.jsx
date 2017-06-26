@@ -88,6 +88,7 @@ function customConfirm(next, dropRowKeys) {
   if (confirm(`Are you sure you want to delete ${dropRowKeysStr}?`)) {
     // If the confirmation is true, call the function that
     // continues the deletion of the record.
+    
     next();
   }
 }

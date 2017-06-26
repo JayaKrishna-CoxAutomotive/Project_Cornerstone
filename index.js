@@ -114,6 +114,8 @@ app.post('/CreateEnvironment', function(req, res) {
     console.log(req.body.description)
       db.insertNode({
                     Name:req.body.description,
+                    State:'Active'
+                   
                 }, 'Environment', function (err, result) {
                   console.log("Environment with name " + result.Name + " has been created.");
                 });
