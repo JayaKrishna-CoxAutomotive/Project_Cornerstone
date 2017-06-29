@@ -3,6 +3,7 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import SplitPane from 'react-split-pane';
 var $ = require('jquery');
 var Env = [];
+let Old_state=''
 var i = 0;
 const MAX_HEIGHT = 600;
 const ROW_HEIGHT = 42;
@@ -27,8 +28,9 @@ function addProducts(quantity) {
         success: function (data) {
             Env = []
             for (var i = 0; i < data.length; i++) {
+              var j=i+1                
                 Env.push({
-                    name: '' + data[i].Name,
+                    name: '' + j,
                      state: '' + data[i].Name,
                 });
             }
@@ -61,6 +63,7 @@ function onAfterInsertRow(row) {
     let puEnv = []
 
     for (const prop in row) {
+        
         newRowStr += prop + ': ' + row[prop] + ' \n';
         puEnv = row[prop]
     }
@@ -92,10 +95,32 @@ function onAfterInsertRow(row) {
 }
 
 function customConfirm(next, dropRowKeys) {
+    var EnvOld='';
     const dropRowKeysStr = dropRowKeys.join(',');
+    var list = dropRowKeysStr.split(",");
+    console.log(list.length)
+    if(list.length==1){
+             EnvOld="'"+Env[dropRowKeysStr-1].state+"'"
+    }
+    else{
+        for(let k=0;k<list.length;k++){
+             console.log(Env[list[k]-1].state)
+             
+             if(k==list.length-1){
+                    EnvOld+="'"+Env[list[k]-1].state+"'"
+             }
+             else{
+                    EnvOld+="'"+Env[list[k]-1].state+"',"
+             }
+        }
+    }
+   
+     
+    console.log("teo delete"+ EnvOld)
+    console.log(list)
     var lookup = {
 
-        'description': dropRowKeysStr,
+        'description': EnvOld,
     }
     console.log(dropRowKeysStr)
     $.ajax({
@@ -126,6 +151,7 @@ const cellEditProp = {
 };
 
 class NameEditor extends React.Component {
+    
   constructor(props) {
     super(props);
     this.updateData = this.updateData.bind(this);
@@ -133,14 +159,38 @@ class NameEditor extends React.Component {
       name: props.defaultValue,
       open: true
     };
+    console.log(props.defaultValue)
+Old_state=''+props.defaultValue
+
   }
   focus() {
     this.refs.inputRef.focus();
   }
   updateData() {
     this.props.onUpdate(this.state.name);
+    var lookup = {
+
+        'description': this.state.name,
+        'OldState':Old_state
+    }
     console.log(this.state.name)
-    
+    console.log(Old_state)
+     $.ajax({
+        url: "http://localhost:3000/ModifyEnvironment",
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(lookup),
+        success: function (data) {
+            //We set the state again after submission, to update with the submitted data
+            //this.setState({data: data});
+            console.log(data);
+        }.bind(this),
+        error: function (xhr, status, err) {
+            console.error("http://localhost:3000/ModifyEnvironment", status, err.toString());
+        }.bind(this)
+    });
+
   }
    close (){
     this.setState({ open: false });
@@ -193,7 +243,7 @@ class About extends Component {
                 Env = []
                 for (var i = 0; i < data.length; i++) {
                     Env.push({
-                        name: '' + data[i].Name,
+                        name: '' + i+1,
                         state:'' + data[i].Name
                     });
                 }
@@ -234,9 +284,9 @@ class About extends Component {
 
         return (
             <div>
-                <BootstrapTable data={Env} height={String(Math.min([MAX_HEIGHT, (Env.length + 1) * ROW_HEIGHT]))} cellEdit={ cellEditProp } insertRow={true} deleteRow={true} selectRow={selectRowProp} options={options} search={true} hover pagination >
-                    <TableHeaderColumn dataField='name'  isKey={true}>Environment</TableHeaderColumn>
-                     <TableHeaderColumn dataField='state' customEditor={ { getElement: createNameEditor } }>State</TableHeaderColumn>
+                <BootstrapTable data={Env} condensed height={String(Math.min([MAX_HEIGHT, (Env.length + 1) * ROW_HEIGHT]))} cellEdit={ cellEditProp } insertRow={true} deleteRow={true} selectRow={selectRowProp} options={options} search={true} hover pagination >
+                    <TableHeaderColumn dataField='name'  width="50" dataAlign="center" isKey={true} >S.No</TableHeaderColumn>
+                     <TableHeaderColumn dataField='state' customEditor={ { getElement: createNameEditor } } >State</TableHeaderColumn>
                 </BootstrapTable>
             </div>
         );

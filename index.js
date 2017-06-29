@@ -200,12 +200,22 @@ app.post('/CreateEnvironment', function(req, res) {
 
     app.post('/DeleteEnvironment', function(req, res) {
         console.log("server"+req.body.description)
-        db.cypherQuery('MATCH (n:Environment) Where n.Name="' + req.body.description + '" SET n.State = "InActive"', function(err, result) {
+        db.cypherQuery('MATCH (n:Environment) Where n.Name in [ ' + req.body.description + ' ]  SET n.State = "InActive"', function(err, result) {
         console.log(err)
         //res.json(result.data);
     });
       
 });
+app.post('/ModifyEnvironment', function(req, res) {
+        console.log("Modify"+req.body.description)
+        console.log("Old"+req.body.OldState)
+        db.cypherQuery('MATCH (n:Environment) Where n.Name="' + req.body.OldState + '" SET n.Name = "'+req.body.description+'"', function(err, result) {
+        console.log(err)
+        //res.json(result.data);
+    });
+      
+});
+
 app.post('/defineProcess', function(req, res) {
       db.insertNode({
                     ProcessName: req.body.description.name,
