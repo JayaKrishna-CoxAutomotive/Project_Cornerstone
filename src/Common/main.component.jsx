@@ -16,6 +16,8 @@ class Main extends Component {
                                 <li><Link to="/" activeClassName="active">Home</Link></li>
                                 <li><Link to="/cars" activeClassName="active">View Process</Link></li>
                                 <li><Link to="/about" activeClassName="active">About</Link></li>
+                                 <li><Link to="/register" activeClassName="active">Register</Link></li>
+                                 <li><Link to="/Login" activeClassName="active">Login</Link></li>
                             </ul>
                         </div>
                     </div>

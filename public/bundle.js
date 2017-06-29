@@ -70,6 +70,14 @@
 
 	var _carComponent2 = _interopRequireDefault(_carComponent);
 
+	var _register = __webpack_require__(673);
+
+	var _register2 = _interopRequireDefault(_register);
+
+	var _Login = __webpack_require__(674);
+
+	var _Login2 = _interopRequireDefault(_Login);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	//import CarDetail from './car/car-detail.component.jsx'
@@ -81,9 +89,11 @@
 	    _react2.default.createElement(
 	        _reactRouter.Route,
 	        { component: _mainComponent2.default },
+	        _react2.default.createElement(_reactRouter.Route, { path: '/register', component: _register2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: '/', component: _homeComponent2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: '/cars', component: _carComponent2.default }),
-	        _react2.default.createElement(_reactRouter.Route, { path: '/about', component: _aboutComponent2.default })
+	        _react2.default.createElement(_reactRouter.Route, { path: '/about', component: _aboutComponent2.default }),
+	        _react2.default.createElement(_reactRouter.Route, { path: '/Login', component: _Login2.default })
 	    )
 	), document.getElementById('container'));
 	// Import routing components
@@ -27592,6 +27602,24 @@
 	                                        { to: '/about', activeClassName: 'active' },
 	                                        'About'
 	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'li',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        _reactRouter.Link,
+	                                        { to: '/register', activeClassName: 'active' },
+	                                        'Register'
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'li',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        _reactRouter.Link,
+	                                        { to: '/Login', activeClassName: 'active' },
+	                                        'Login'
+	                                    )
 	                                )
 	                            )
 	                        )
@@ -38088,6 +38116,8 @@
 	    value: true
 	});
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(1);
@@ -38135,7 +38165,8 @@
 	            Env = [];
 	            for (var i = 0; i < data.length; i++) {
 	                Env.push({
-	                    name: '' + data[i].Name
+	                    name: '' + data[i].Name,
+	                    state: '' + data[i].Name
 	                });
 	            }
 	            console.log(Env);
@@ -38236,6 +38267,95 @@
 	    }
 	}
 
+	var cellEditProp = {
+	    mode: 'click'
+	};
+
+	var NameEditor = function (_React$Component2) {
+	    _inherits(NameEditor, _React$Component2);
+
+	    function NameEditor(props) {
+	        _classCallCheck(this, NameEditor);
+
+	        var _this2 = _possibleConstructorReturn(this, (NameEditor.__proto__ || Object.getPrototypeOf(NameEditor)).call(this, props));
+
+	        _this2.updateData = _this2.updateData.bind(_this2);
+	        _this2.state = {
+	            name: props.defaultValue,
+	            open: true
+	        };
+	        return _this2;
+	    }
+
+	    _createClass(NameEditor, [{
+	        key: 'focus',
+	        value: function focus() {
+	            this.refs.inputRef.focus();
+	        }
+	    }, {
+	        key: 'updateData',
+	        value: function updateData() {
+	            this.props.onUpdate(this.state.name);
+	            console.log(this.state.name);
+	        }
+	    }, {
+	        key: 'close',
+	        value: function close() {
+	            this.setState({ open: false });
+	            this.props.onUpdate(this.props.defaultValue);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this3 = this;
+
+	            var fadeIn = this.state.open ? 'in' : '';
+	            var display = this.state.open ? 'block' : 'none';
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'modal fade ' + fadeIn, id: 'myModal', role: 'dialog', style: { display: display } },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'modal-dialog' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'modal-content' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'modal-body' },
+	                            _react2.default.createElement('input', {
+	                                ref: 'inputRef',
+	                                className: (this.props.editorClass || '') + ' form-control editor edit-text',
+	                                style: { display: 'inline', width: '50%' },
+	                                type: 'text',
+	                                value: this.state.name,
+	                                onChange: function onChange(e) {
+	                                    _this3.setState({ name: e.currentTarget.value });
+	                                } })
+	                        ),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'modal-footer' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-primary', onClick: this.updateData },
+	                                'Save'
+	                            ),
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default', onClick: this.close.bind(this) },
+	                                'Close'
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return NameEditor;
+	}(_react2.default.Component);
+
 	var About = function (_Component) {
 	    _inherits(About, _Component);
 
@@ -38260,7 +38380,8 @@
 	                    Env = [];
 	                    for (var i = 0; i < data.length; i++) {
 	                        Env.push({
-	                            name: '' + data[i].Name
+	                            name: '' + data[i].Name,
+	                            state: '' + data[i].Name
 	                        });
 	                    }
 	                    console.log(Env);
@@ -38273,15 +38394,23 @@
 
 	            //this.getEnvList();
 	            addProducts(1);
+
 	            var selectRowProp = {
 	                mode: 'checkbox',
 	                bgColor: 'pink',
 	                showOnlySelected: true
 	            };
+	            var cellEditProp = {
+	                mode: 'click'
+	            };
 	            var options = {
 	                afterInsertRow: onAfterInsertRow,
 	                handleConfirmDeleteRow: customConfirm // A hook for after insert rows
 	            };
+	            var createNameEditor = function createNameEditor(onUpdate, props) {
+	                return _react2.default.createElement(NameEditor, _extends({ onUpdate: onUpdate }, props));
+	            };
+
 	            // this.getEnvironment()
 	            var numbers = [1, 2, 3, 4, 6];
 	            // Map through cars and return linked cars
@@ -38292,16 +38421,22 @@
 	                    number
 	                );
 	            });
+
 	            return _react2.default.createElement(
 	                'div',
 	                null,
 	                _react2.default.createElement(
 	                    _reactBootstrapTable.BootstrapTable,
-	                    { data: Env, height: String(Math.min([MAX_HEIGHT, (Env.length + 1) * ROW_HEIGHT])), insertRow: true, deleteRow: true, selectRow: selectRowProp, options: options, search: true, hover: true, pagination: true },
+	                    { data: Env, height: String(Math.min([MAX_HEIGHT, (Env.length + 1) * ROW_HEIGHT])), cellEdit: cellEditProp, insertRow: true, deleteRow: true, selectRow: selectRowProp, options: options, search: true, hover: true, pagination: true },
 	                    _react2.default.createElement(
 	                        _reactBootstrapTable.TableHeaderColumn,
 	                        { dataField: 'name', isKey: true },
-	                        'Account'
+	                        'Environment'
+	                    ),
+	                    _react2.default.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'state', customEditor: { getElement: createNameEditor } },
+	                        'State'
 	                    )
 	                )
 	            );
@@ -83498,6 +83633,177 @@
 	  prePageText: '上一頁'
 	};
 	exports.default = Pagination;
+
+/***/ }),
+/* 673 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _reactRouter = __webpack_require__(182);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(182);
+	var Route = __webpack_require__(182);
+	var ReactDOM = __webpack_require__(36);
+
+
+	var $ = __webpack_require__(247);
+
+	var register = function (_React$Component) {
+	  _inherits(register, _React$Component);
+
+	  function register() {
+	    _classCallCheck(this, register);
+
+	    return _possibleConstructorReturn(this, (register.__proto__ || Object.getPrototypeOf(register)).apply(this, arguments));
+	  }
+
+	  _createClass(register, [{
+	    key: "handleSubmit",
+	    value: function handleSubmit(e) {
+	      _reactRouter.browserHistory.push('/Login');
+	      alert('You are ready to login with your new username');
+	      _reactRouter.browserHistory.push('/login');
+	      // this.setState({ redirectToNewPage: true })
+	      //   e.preventDefault();
+	    }
+
+	    //  FLUX Actions--Dispatchers--Stores--Views
+
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return React.createElement(
+	        "form",
+	        { className: "form", onSubmit: this.handleSubmit },
+	        React.createElement(
+	          "div",
+	          { "class": "form-group" },
+	          React.createElement(
+	            "label",
+	            { className: "control-label" },
+	            "Name"
+	          ),
+	          React.createElement("input", { type: "text", className: "form-control", "class": "form-control", placeholder: "Name", name: "name", required: true })
+	        ),
+	        React.createElement(
+	          "div",
+	          { "class": "form-group" },
+	          React.createElement(
+	            "label",
+	            null,
+	            "Username"
+	          ),
+	          React.createElement("input", { type: "text", className: "form-control", "class": "form-control", placeholder: "Username", name: "username", required: true })
+	        ),
+	        React.createElement(
+	          "div",
+	          { "class": "form-group" },
+	          React.createElement(
+	            "label",
+	            null,
+	            "Email"
+	          ),
+	          React.createElement("input", { type: "email", className: "form-control", "class": "form-control", placeholder: "Email", name: "email", required: true })
+	        ),
+	        React.createElement(
+	          "div",
+	          { "class": "form-group" },
+	          React.createElement(
+	            "label",
+	            null,
+	            "Password"
+	          ),
+	          React.createElement("input", { type: "password", className: "form-control", "class": "form-control", placeholder: "Password", name: "password", required: true })
+	        ),
+	        React.createElement(
+	          "div",
+	          { "class": "form-group" },
+	          React.createElement(
+	            "label",
+	            null,
+	            "Confirm Password"
+	          ),
+	          React.createElement("input", { type: "password", className: "form-control", "class": "form-control", placeholder: "Password", name: "password2", required: true })
+	        ),
+	        React.createElement(
+	          "button",
+	          { type: "submit", className: "form-control", "class": "btn btn-default" },
+	          "Submit"
+	        )
+	      );
+	    }
+	  }]);
+
+	  return register;
+	}(React.Component);
+
+	exports.default = register;
+
+/***/ }),
+/* 674 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(1);
+	var Router = __webpack_require__(182);
+	var Route = __webpack_require__(182);
+	var ReactDOM = __webpack_require__(36);
+	var $ = __webpack_require__(247);
+
+	module.exports = React.createClass({
+	  displayName: "exports",
+
+
+	  //  FLUX Actions--Dispatchers--Stores--Views
+
+	  render: function render() {
+	    var wellStyles = { Width: 400, margin: '0 auto 10px' };
+	    return React.createElement(
+	      "form",
+	      { method: "post", action: "/users/login" },
+	      React.createElement(
+	        "div",
+	        { "class": "form-group" },
+	        React.createElement(
+	          "label",
+	          { className: "control-label" },
+	          "Username"
+	        ),
+	        React.createElement("input", { type: "text", className: "form-control", "class": "form-control", name: "username", placeholder: "Username" })
+	      ),
+	      React.createElement(
+	        "div",
+	        { "class": "form-group" },
+	        React.createElement(
+	          "label",
+	          { className: "control-label" },
+	          "Password"
+	        ),
+	        React.createElement("input", { type: "password", className: "form-control", "class": "form-control", name: "password", placeholder: "Password" })
+	      ),
+	      React.createElement(
+	        "button",
+	        { type: "submit", className: "form-control", "class": "btn btn-default" },
+	        "Submit"
+	      )
+	    );
+	  }
+	});
 
 /***/ })
 /******/ ]);

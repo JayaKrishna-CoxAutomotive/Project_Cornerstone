@@ -29,6 +29,7 @@ function addProducts(quantity) {
             for (var i = 0; i < data.length; i++) {
                 Env.push({
                     name: '' + data[i].Name,
+                     state: '' + data[i].Name,
                 });
             }
             console.log(Env)
@@ -119,12 +120,66 @@ function customConfirm(next, dropRowKeys) {
     }
 }
 
+
+const cellEditProp = {
+  mode: 'click'
+};
+
+class NameEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.updateData = this.updateData.bind(this);
+    this.state = {
+      name: props.defaultValue,
+      open: true
+    };
+  }
+  focus() {
+    this.refs.inputRef.focus();
+  }
+  updateData() {
+    this.props.onUpdate(this.state.name);
+    console.log(this.state.name)
+    
+  }
+   close (){
+    this.setState({ open: false });
+    this.props.onUpdate(this.props.defaultValue);
+  }
+ 
+  render() {
+    const fadeIn = this.state.open ? 'in' : '';
+    const display = this.state.open ? 'block' : 'none';
+    return (
+      <div className={ `modal fade ${fadeIn}` } id='myModal' role='dialog' style={ { display } }>
+        <div className='modal-dialog'>
+          <div className='modal-content'>
+            <div className='modal-body'>
+              <input
+                ref='inputRef'
+                className={ ( this.props.editorClass || '') + ' form-control editor edit-text' }
+                style={ { display: 'inline', width: '50%' } }
+                type='text'
+                value={ this.state.name }
+                onChange={ e => { this.setState({ name: e.currentTarget.value }); } } />
+            </div>
+            <div className='modal-footer'>
+              <button type='button' className='btn btn-primary' onClick={ this.updateData }>Save</button>
+              <button type='button' className='btn btn-default' onClick={ this.close.bind(this) }>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
 class About extends Component {
 
 
     constructor(props) {
         super(props);
     }
+  
     getEnvList() {
         console.log("about")
 
@@ -139,6 +194,7 @@ class About extends Component {
                 for (var i = 0; i < data.length; i++) {
                     Env.push({
                         name: '' + data[i].Name,
+                        state:'' + data[i].Name
                     });
                 }
                 console.log(Env)
@@ -153,24 +209,34 @@ class About extends Component {
 
         //this.getEnvList();
         addProducts(1);
-        const selectRowProp = {
+      
+ 
+       const selectRowProp = {
             mode: 'checkbox',
             bgColor: 'pink',
             showOnlySelected: true
         };
+        const cellEditProp = {
+            mode: 'click'
+};
         var options = {
             afterInsertRow: onAfterInsertRow,
             handleConfirmDeleteRow: customConfirm  // A hook for after insert rows
         };
+        const createNameEditor = (onUpdate, props) => (<NameEditor onUpdate={ onUpdate } {...props}/>);
+
+
         // this.getEnvironment()
         const numbers = [1, 2, 3, 4, 6]
         // Map through cars and return linked cars
         const ProcessInstances = numbers.map((number) =>
             <li value={number} className="list-group-item">{number}</li>)
+
         return (
             <div>
-                <BootstrapTable data={Env} height={String(Math.min([MAX_HEIGHT, (Env.length + 1) * ROW_HEIGHT]))} insertRow={true} deleteRow={true} selectRow={selectRowProp} options={options} search={true} hover pagination>
-                    <TableHeaderColumn dataField='name' isKey={true}>Account</TableHeaderColumn>
+                <BootstrapTable data={Env} height={String(Math.min([MAX_HEIGHT, (Env.length + 1) * ROW_HEIGHT]))} cellEdit={ cellEditProp } insertRow={true} deleteRow={true} selectRow={selectRowProp} options={options} search={true} hover pagination >
+                    <TableHeaderColumn dataField='name'  isKey={true}>Environment</TableHeaderColumn>
+                     <TableHeaderColumn dataField='state' customEditor={ { getElement: createNameEditor } }>State</TableHeaderColumn>
                 </BootstrapTable>
             </div>
         );

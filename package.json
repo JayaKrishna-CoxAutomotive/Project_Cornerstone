@@ -32,7 +32,12 @@
     "body-parser": "*",
     "browserify": "^14.4.0",
     "classnames": "^2.2.5",
+    "connect-flash": "*",
     "express": "^4.15.3",
+    "express-handlebars": "*",
+    "express-messages": "*",
+    "express-session": "*",
+    "express-validator": "*",
     "guid": "0.0.12",
     "gulp": "^3.9.1",
     "history": "^3.0.0",
@@ -53,6 +58,7 @@
     "vinyl-source-stream": "^1.1.0",
     "passport": "*",
     "passport-http": "*",
-    "passport-local": "*"
+    "passport-local": "*",
+    "cookie-parser": "^1.4.1"
   }
 }
