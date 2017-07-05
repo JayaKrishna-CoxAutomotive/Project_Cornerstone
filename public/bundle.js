@@ -83708,6 +83708,7 @@
 
 	var $ = __webpack_require__(247);
 	var Errors = [];
+	var k = 0;
 
 	var register = function (_React$Component) {
 	  _inherits(register, _React$Component);
@@ -83741,9 +83742,13 @@
 	        success: function (data) {
 	          //We set the state again after submission, to update with the submitted data
 	          console.log("great");
+	          console.log(Errors.length);
 	          console.log(data);
 	          Errors.push(data);
 	          console.log(Errors.length);
+	          if (Errors.length > 0) {
+	            k = 1;
+	          }
 	        }.bind(this),
 	        error: function (xhr, status, err) {
 	          console.log("error status" + err);
@@ -83752,11 +83757,11 @@
 	          console.error("http://localhost:3000/register", status, err.toString());
 	        }.bind(this)
 	      });
+	      this.forceUpdate();
 	      //console.log("here are your ")
-	      console.log("Length of error matrix" + Errors.length
-	      //browserHistory.push('/Login');
-	      //alert('You are ready to login with your new username')
-	      );
+	      console.log("Length of error matrix" + Errors.length);
+	      _reactRouter.browserHistory.push('/Login');
+	      alert('You are ready to login with your new username');
 	    }
 	    //browserHistory.push('/Login');
 	    //alert('You are ready to login with your new username')
@@ -83778,7 +83783,11 @@
 	        React.createElement(
 	          "div",
 	          { className: "alert-danger" },
-	          "Waring "
+	          React.createElement(
+	            "h1",
+	            null,
+	            k == 1 ? 'Passwords didnt match' : ''
+	          )
 	        ),
 	        React.createElement(
 	          "div",
@@ -83841,6 +83850,8 @@
 
 	  return register;
 	}(React.Component);
+	//ReactDOM.render(<register/>); 
+
 
 	exports.default = register;
 
@@ -83855,10 +83866,38 @@
 	var Route = __webpack_require__(182);
 	var ReactDOM = __webpack_require__(36);
 	var $ = __webpack_require__(247);
+	var LocalStrategy = __webpack_require__(675).Strategy;
 
 	module.exports = React.createClass({
 	  displayName: "exports",
 
+
+	  login: function login(e) {
+	    var formData = {};
+	    e.preventDefault();
+	    for (var field in this.refs) {
+	      formData[field] = this.refs[field].value;
+	    }
+	    console.log('-->', formData);
+	    console.log("Login");
+	    $.ajax({
+	      url: "http://localhost:3000/login",
+	      dataType: 'json',
+	      type: 'POST',
+	      contentType: 'application/json',
+	      data: JSON.stringify(formData),
+	      success: function (data) {
+	        //We set the state again after submission, to update with the submitted data
+	        console.log("great");
+	      }.bind(this),
+	      error: function (xhr, status, err) {
+	        console.log("error status" + err);
+	        console.log(status);
+	        console.log("end" + xhr);
+	        console.error("http://localhost:3000/login", status, err.toString());
+	      }.bind(this)
+	    });
+	  },
 
 	  //  FLUX Actions--Dispatchers--Stores--Views
 
@@ -83866,7 +83905,7 @@
 	    var wellStyles = { Width: 400, margin: '0 auto 10px' };
 	    return React.createElement(
 	      "form",
-	      { method: "post", action: "/users/login" },
+	      { className: "form", onSubmit: this.login },
 	      React.createElement(
 	        "div",
 	        { "class": "form-group" },
@@ -83875,7 +83914,7 @@
 	          { className: "control-label" },
 	          "Username"
 	        ),
-	        React.createElement("input", { type: "text", className: "form-control", "class": "form-control", name: "username", placeholder: "Username" })
+	        React.createElement("input", { ref: "username", type: "text", className: "form-control", "class": "form-control", name: "username", placeholder: "Username" })
 	      ),
 	      React.createElement(
 	        "div",
@@ -83885,7 +83924,7 @@
 	          { className: "control-label" },
 	          "Password"
 	        ),
-	        React.createElement("input", { type: "password", className: "form-control", "class": "form-control", name: "password", placeholder: "Password" })
+	        React.createElement("input", { ref: "password", type: "password", className: "form-control", "class": "form-control", name: "password", placeholder: "Password" })
 	      ),
 	      React.createElement(
 	        "button",
@@ -83895,6 +83934,839 @@
 	    );
 	  }
 	});
+
+/***/ }),
+/* 675 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies.
+	 */
+	var Strategy = __webpack_require__(676);
+
+
+	/**
+	 * Expose `Strategy` directly from package.
+	 */
+	exports = module.exports = Strategy;
+
+	/**
+	 * Export constructors.
+	 */
+	exports.Strategy = Strategy;
+
+
+/***/ }),
+/* 676 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies.
+	 */
+	var passport = __webpack_require__(677)
+	  , util = __webpack_require__(679)
+	  , lookup = __webpack_require__(682).lookup;
+
+
+	/**
+	 * `Strategy` constructor.
+	 *
+	 * The local authentication strategy authenticates requests based on the
+	 * credentials submitted through an HTML-based login form.
+	 *
+	 * Applications must supply a `verify` callback which accepts `username` and
+	 * `password` credentials, and then calls the `done` callback supplying a
+	 * `user`, which should be set to `false` if the credentials are not valid.
+	 * If an exception occured, `err` should be set.
+	 *
+	 * Optionally, `options` can be used to change the fields in which the
+	 * credentials are found.
+	 *
+	 * Options:
+	 *   - `usernameField`  field name where the username is found, defaults to _username_
+	 *   - `passwordField`  field name where the password is found, defaults to _password_
+	 *   - `passReqToCallback`  when `true`, `req` is the first argument to the verify callback (default: `false`)
+	 *
+	 * Examples:
+	 *
+	 *     passport.use(new LocalStrategy(
+	 *       function(username, password, done) {
+	 *         User.findOne({ username: username, password: password }, function (err, user) {
+	 *           done(err, user);
+	 *         });
+	 *       }
+	 *     ));
+	 *
+	 * @param {Object} options
+	 * @param {Function} verify
+	 * @api public
+	 */
+	function Strategy(options, verify) {
+	  if (typeof options == 'function') {
+	    verify = options;
+	    options = {};
+	  }
+	  if (!verify) { throw new TypeError('LocalStrategy requires a verify callback'); }
+	  
+	  this._usernameField = options.usernameField || 'username';
+	  this._passwordField = options.passwordField || 'password';
+	  
+	  passport.Strategy.call(this);
+	  this.name = 'local';
+	  this._verify = verify;
+	  this._passReqToCallback = options.passReqToCallback;
+	}
+
+	/**
+	 * Inherit from `passport.Strategy`.
+	 */
+	util.inherits(Strategy, passport.Strategy);
+
+	/**
+	 * Authenticate request based on the contents of a form submission.
+	 *
+	 * @param {Object} req
+	 * @api protected
+	 */
+	Strategy.prototype.authenticate = function(req, options) {
+	  options = options || {};
+	  var username = lookup(req.body, this._usernameField) || lookup(req.query, this._usernameField);
+	  var password = lookup(req.body, this._passwordField) || lookup(req.query, this._passwordField);
+	  
+	  if (!username || !password) {
+	    return this.fail({ message: options.badRequestMessage || 'Missing credentials' }, 400);
+	  }
+	  
+	  var self = this;
+	  
+	  function verified(err, user, info) {
+	    if (err) { return self.error(err); }
+	    if (!user) { return self.fail(info); }
+	    self.success(user, info);
+	  }
+	  
+	  try {
+	    if (self._passReqToCallback) {
+	      this._verify(req, username, password, verified);
+	    } else {
+	      this._verify(username, password, verified);
+	    }
+	  } catch (ex) {
+	    return self.error(ex);
+	  }
+	};
+
+
+	/**
+	 * Expose `Strategy`.
+	 */
+	module.exports = Strategy;
+
+
+/***/ }),
+/* 677 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies.
+	 */
+	var Strategy = __webpack_require__(678);
+
+
+	/**
+	 * Expose `Strategy` directly from package.
+	 */
+	exports = module.exports = Strategy;
+
+	/**
+	 * Export constructors.
+	 */
+	exports.Strategy = Strategy;
+
+
+/***/ }),
+/* 678 */
+/***/ (function(module, exports) {
+
+	/**
+	 * Creates an instance of `Strategy`.
+	 *
+	 * @constructor
+	 * @api public
+	 */
+	function Strategy() {
+	}
+
+	/**
+	 * Authenticate request.
+	 *
+	 * This function must be overridden by subclasses.  In abstract form, it always
+	 * throws an exception.
+	 *
+	 * @param {Object} req The request to authenticate.
+	 * @param {Object} [options] Strategy-specific options.
+	 * @api public
+	 */
+	Strategy.prototype.authenticate = function(req, options) {
+	  throw new Error('Strategy#authenticate must be overridden by subclass');
+	};
+
+
+	/**
+	 * Expose `Strategy`.
+	 */
+	module.exports = Strategy;
+
+
+/***/ }),
+/* 679 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	var formatRegExp = /%[sdj%]/g;
+	exports.format = function(f) {
+	  if (!isString(f)) {
+	    var objects = [];
+	    for (var i = 0; i < arguments.length; i++) {
+	      objects.push(inspect(arguments[i]));
+	    }
+	    return objects.join(' ');
+	  }
+
+	  var i = 1;
+	  var args = arguments;
+	  var len = args.length;
+	  var str = String(f).replace(formatRegExp, function(x) {
+	    if (x === '%%') return '%';
+	    if (i >= len) return x;
+	    switch (x) {
+	      case '%s': return String(args[i++]);
+	      case '%d': return Number(args[i++]);
+	      case '%j':
+	        try {
+	          return JSON.stringify(args[i++]);
+	        } catch (_) {
+	          return '[Circular]';
+	        }
+	      default:
+	        return x;
+	    }
+	  });
+	  for (var x = args[i]; i < len; x = args[++i]) {
+	    if (isNull(x) || !isObject(x)) {
+	      str += ' ' + x;
+	    } else {
+	      str += ' ' + inspect(x);
+	    }
+	  }
+	  return str;
+	};
+
+
+	// Mark that a method should not be used.
+	// Returns a modified function which warns once by default.
+	// If --no-deprecation is set, then it is a no-op.
+	exports.deprecate = function(fn, msg) {
+	  // Allow for deprecating things in the process of starting up.
+	  if (isUndefined(global.process)) {
+	    return function() {
+	      return exports.deprecate(fn, msg).apply(this, arguments);
+	    };
+	  }
+
+	  if (process.noDeprecation === true) {
+	    return fn;
+	  }
+
+	  var warned = false;
+	  function deprecated() {
+	    if (!warned) {
+	      if (process.throwDeprecation) {
+	        throw new Error(msg);
+	      } else if (process.traceDeprecation) {
+	        console.trace(msg);
+	      } else {
+	        console.error(msg);
+	      }
+	      warned = true;
+	    }
+	    return fn.apply(this, arguments);
+	  }
+
+	  return deprecated;
+	};
+
+
+	var debugs = {};
+	var debugEnviron;
+	exports.debuglog = function(set) {
+	  if (isUndefined(debugEnviron))
+	    debugEnviron = process.env.NODE_DEBUG || '';
+	  set = set.toUpperCase();
+	  if (!debugs[set]) {
+	    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+	      var pid = process.pid;
+	      debugs[set] = function() {
+	        var msg = exports.format.apply(exports, arguments);
+	        console.error('%s %d: %s', set, pid, msg);
+	      };
+	    } else {
+	      debugs[set] = function() {};
+	    }
+	  }
+	  return debugs[set];
+	};
+
+
+	/**
+	 * Echos the value of a value. Trys to print the value out
+	 * in the best way possible given the different types.
+	 *
+	 * @param {Object} obj The object to print out.
+	 * @param {Object} opts Optional options object that alters the output.
+	 */
+	/* legacy: obj, showHidden, depth, colors*/
+	function inspect(obj, opts) {
+	  // default options
+	  var ctx = {
+	    seen: [],
+	    stylize: stylizeNoColor
+	  };
+	  // legacy...
+	  if (arguments.length >= 3) ctx.depth = arguments[2];
+	  if (arguments.length >= 4) ctx.colors = arguments[3];
+	  if (isBoolean(opts)) {
+	    // legacy...
+	    ctx.showHidden = opts;
+	  } else if (opts) {
+	    // got an "options" object
+	    exports._extend(ctx, opts);
+	  }
+	  // set default options
+	  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+	  if (isUndefined(ctx.depth)) ctx.depth = 2;
+	  if (isUndefined(ctx.colors)) ctx.colors = false;
+	  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+	  if (ctx.colors) ctx.stylize = stylizeWithColor;
+	  return formatValue(ctx, obj, ctx.depth);
+	}
+	exports.inspect = inspect;
+
+
+	// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+	inspect.colors = {
+	  'bold' : [1, 22],
+	  'italic' : [3, 23],
+	  'underline' : [4, 24],
+	  'inverse' : [7, 27],
+	  'white' : [37, 39],
+	  'grey' : [90, 39],
+	  'black' : [30, 39],
+	  'blue' : [34, 39],
+	  'cyan' : [36, 39],
+	  'green' : [32, 39],
+	  'magenta' : [35, 39],
+	  'red' : [31, 39],
+	  'yellow' : [33, 39]
+	};
+
+	// Don't use 'blue' not visible on cmd.exe
+	inspect.styles = {
+	  'special': 'cyan',
+	  'number': 'yellow',
+	  'boolean': 'yellow',
+	  'undefined': 'grey',
+	  'null': 'bold',
+	  'string': 'green',
+	  'date': 'magenta',
+	  // "name": intentionally not styling
+	  'regexp': 'red'
+	};
+
+
+	function stylizeWithColor(str, styleType) {
+	  var style = inspect.styles[styleType];
+
+	  if (style) {
+	    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+	           '\u001b[' + inspect.colors[style][1] + 'm';
+	  } else {
+	    return str;
+	  }
+	}
+
+
+	function stylizeNoColor(str, styleType) {
+	  return str;
+	}
+
+
+	function arrayToHash(array) {
+	  var hash = {};
+
+	  array.forEach(function(val, idx) {
+	    hash[val] = true;
+	  });
+
+	  return hash;
+	}
+
+
+	function formatValue(ctx, value, recurseTimes) {
+	  // Provide a hook for user-specified inspect functions.
+	  // Check that value is an object with an inspect function on it
+	  if (ctx.customInspect &&
+	      value &&
+	      isFunction(value.inspect) &&
+	      // Filter out the util module, it's inspect function is special
+	      value.inspect !== exports.inspect &&
+	      // Also filter out any prototype objects using the circular check.
+	      !(value.constructor && value.constructor.prototype === value)) {
+	    var ret = value.inspect(recurseTimes, ctx);
+	    if (!isString(ret)) {
+	      ret = formatValue(ctx, ret, recurseTimes);
+	    }
+	    return ret;
+	  }
+
+	  // Primitive types cannot have properties
+	  var primitive = formatPrimitive(ctx, value);
+	  if (primitive) {
+	    return primitive;
+	  }
+
+	  // Look up the keys of the object.
+	  var keys = Object.keys(value);
+	  var visibleKeys = arrayToHash(keys);
+
+	  if (ctx.showHidden) {
+	    keys = Object.getOwnPropertyNames(value);
+	  }
+
+	  // IE doesn't make error fields non-enumerable
+	  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+	  if (isError(value)
+	      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+	    return formatError(value);
+	  }
+
+	  // Some type of object without properties can be shortcutted.
+	  if (keys.length === 0) {
+	    if (isFunction(value)) {
+	      var name = value.name ? ': ' + value.name : '';
+	      return ctx.stylize('[Function' + name + ']', 'special');
+	    }
+	    if (isRegExp(value)) {
+	      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+	    }
+	    if (isDate(value)) {
+	      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+	    }
+	    if (isError(value)) {
+	      return formatError(value);
+	    }
+	  }
+
+	  var base = '', array = false, braces = ['{', '}'];
+
+	  // Make Array say that they are Array
+	  if (isArray(value)) {
+	    array = true;
+	    braces = ['[', ']'];
+	  }
+
+	  // Make functions say that they are functions
+	  if (isFunction(value)) {
+	    var n = value.name ? ': ' + value.name : '';
+	    base = ' [Function' + n + ']';
+	  }
+
+	  // Make RegExps say that they are RegExps
+	  if (isRegExp(value)) {
+	    base = ' ' + RegExp.prototype.toString.call(value);
+	  }
+
+	  // Make dates with properties first say the date
+	  if (isDate(value)) {
+	    base = ' ' + Date.prototype.toUTCString.call(value);
+	  }
+
+	  // Make error with message first say the error
+	  if (isError(value)) {
+	    base = ' ' + formatError(value);
+	  }
+
+	  if (keys.length === 0 && (!array || value.length == 0)) {
+	    return braces[0] + base + braces[1];
+	  }
+
+	  if (recurseTimes < 0) {
+	    if (isRegExp(value)) {
+	      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+	    } else {
+	      return ctx.stylize('[Object]', 'special');
+	    }
+	  }
+
+	  ctx.seen.push(value);
+
+	  var output;
+	  if (array) {
+	    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+	  } else {
+	    output = keys.map(function(key) {
+	      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+	    });
+	  }
+
+	  ctx.seen.pop();
+
+	  return reduceToSingleString(output, base, braces);
+	}
+
+
+	function formatPrimitive(ctx, value) {
+	  if (isUndefined(value))
+	    return ctx.stylize('undefined', 'undefined');
+	  if (isString(value)) {
+	    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+	                                             .replace(/'/g, "\\'")
+	                                             .replace(/\\"/g, '"') + '\'';
+	    return ctx.stylize(simple, 'string');
+	  }
+	  if (isNumber(value))
+	    return ctx.stylize('' + value, 'number');
+	  if (isBoolean(value))
+	    return ctx.stylize('' + value, 'boolean');
+	  // For some reason typeof null is "object", so special case here.
+	  if (isNull(value))
+	    return ctx.stylize('null', 'null');
+	}
+
+
+	function formatError(value) {
+	  return '[' + Error.prototype.toString.call(value) + ']';
+	}
+
+
+	function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+	  var output = [];
+	  for (var i = 0, l = value.length; i < l; ++i) {
+	    if (hasOwnProperty(value, String(i))) {
+	      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+	          String(i), true));
+	    } else {
+	      output.push('');
+	    }
+	  }
+	  keys.forEach(function(key) {
+	    if (!key.match(/^\d+$/)) {
+	      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+	          key, true));
+	    }
+	  });
+	  return output;
+	}
+
+
+	function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+	  var name, str, desc;
+	  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+	  if (desc.get) {
+	    if (desc.set) {
+	      str = ctx.stylize('[Getter/Setter]', 'special');
+	    } else {
+	      str = ctx.stylize('[Getter]', 'special');
+	    }
+	  } else {
+	    if (desc.set) {
+	      str = ctx.stylize('[Setter]', 'special');
+	    }
+	  }
+	  if (!hasOwnProperty(visibleKeys, key)) {
+	    name = '[' + key + ']';
+	  }
+	  if (!str) {
+	    if (ctx.seen.indexOf(desc.value) < 0) {
+	      if (isNull(recurseTimes)) {
+	        str = formatValue(ctx, desc.value, null);
+	      } else {
+	        str = formatValue(ctx, desc.value, recurseTimes - 1);
+	      }
+	      if (str.indexOf('\n') > -1) {
+	        if (array) {
+	          str = str.split('\n').map(function(line) {
+	            return '  ' + line;
+	          }).join('\n').substr(2);
+	        } else {
+	          str = '\n' + str.split('\n').map(function(line) {
+	            return '   ' + line;
+	          }).join('\n');
+	        }
+	      }
+	    } else {
+	      str = ctx.stylize('[Circular]', 'special');
+	    }
+	  }
+	  if (isUndefined(name)) {
+	    if (array && key.match(/^\d+$/)) {
+	      return str;
+	    }
+	    name = JSON.stringify('' + key);
+	    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+	      name = name.substr(1, name.length - 2);
+	      name = ctx.stylize(name, 'name');
+	    } else {
+	      name = name.replace(/'/g, "\\'")
+	                 .replace(/\\"/g, '"')
+	                 .replace(/(^"|"$)/g, "'");
+	      name = ctx.stylize(name, 'string');
+	    }
+	  }
+
+	  return name + ': ' + str;
+	}
+
+
+	function reduceToSingleString(output, base, braces) {
+	  var numLinesEst = 0;
+	  var length = output.reduce(function(prev, cur) {
+	    numLinesEst++;
+	    if (cur.indexOf('\n') >= 0) numLinesEst++;
+	    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+	  }, 0);
+
+	  if (length > 60) {
+	    return braces[0] +
+	           (base === '' ? '' : base + '\n ') +
+	           ' ' +
+	           output.join(',\n  ') +
+	           ' ' +
+	           braces[1];
+	  }
+
+	  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+	}
+
+
+	// NOTE: These type checking functions intentionally don't use `instanceof`
+	// because it is fragile and can be easily faked with `Object.create()`.
+	function isArray(ar) {
+	  return Array.isArray(ar);
+	}
+	exports.isArray = isArray;
+
+	function isBoolean(arg) {
+	  return typeof arg === 'boolean';
+	}
+	exports.isBoolean = isBoolean;
+
+	function isNull(arg) {
+	  return arg === null;
+	}
+	exports.isNull = isNull;
+
+	function isNullOrUndefined(arg) {
+	  return arg == null;
+	}
+	exports.isNullOrUndefined = isNullOrUndefined;
+
+	function isNumber(arg) {
+	  return typeof arg === 'number';
+	}
+	exports.isNumber = isNumber;
+
+	function isString(arg) {
+	  return typeof arg === 'string';
+	}
+	exports.isString = isString;
+
+	function isSymbol(arg) {
+	  return typeof arg === 'symbol';
+	}
+	exports.isSymbol = isSymbol;
+
+	function isUndefined(arg) {
+	  return arg === void 0;
+	}
+	exports.isUndefined = isUndefined;
+
+	function isRegExp(re) {
+	  return isObject(re) && objectToString(re) === '[object RegExp]';
+	}
+	exports.isRegExp = isRegExp;
+
+	function isObject(arg) {
+	  return typeof arg === 'object' && arg !== null;
+	}
+	exports.isObject = isObject;
+
+	function isDate(d) {
+	  return isObject(d) && objectToString(d) === '[object Date]';
+	}
+	exports.isDate = isDate;
+
+	function isError(e) {
+	  return isObject(e) &&
+	      (objectToString(e) === '[object Error]' || e instanceof Error);
+	}
+	exports.isError = isError;
+
+	function isFunction(arg) {
+	  return typeof arg === 'function';
+	}
+	exports.isFunction = isFunction;
+
+	function isPrimitive(arg) {
+	  return arg === null ||
+	         typeof arg === 'boolean' ||
+	         typeof arg === 'number' ||
+	         typeof arg === 'string' ||
+	         typeof arg === 'symbol' ||  // ES6 symbol
+	         typeof arg === 'undefined';
+	}
+	exports.isPrimitive = isPrimitive;
+
+	exports.isBuffer = __webpack_require__(680);
+
+	function objectToString(o) {
+	  return Object.prototype.toString.call(o);
+	}
+
+
+	function pad(n) {
+	  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+	}
+
+
+	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+	              'Oct', 'Nov', 'Dec'];
+
+	// 26 Feb 16:19:34
+	function timestamp() {
+	  var d = new Date();
+	  var time = [pad(d.getHours()),
+	              pad(d.getMinutes()),
+	              pad(d.getSeconds())].join(':');
+	  return [d.getDate(), months[d.getMonth()], time].join(' ');
+	}
+
+
+	// log is just a thin wrapper to console.log that prepends a timestamp
+	exports.log = function() {
+	  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+	};
+
+
+	/**
+	 * Inherit the prototype methods from one constructor into another.
+	 *
+	 * The Function.prototype.inherits from lang.js rewritten as a standalone
+	 * function (not on Function.prototype). NOTE: If this file is to be loaded
+	 * during bootstrapping this function needs to be rewritten using some native
+	 * functions as prototype setup using normal JavaScript does not work as
+	 * expected during bootstrapping (see mirror.js in r114903).
+	 *
+	 * @param {function} ctor Constructor function which needs to inherit the
+	 *     prototype.
+	 * @param {function} superCtor Constructor function to inherit prototype from.
+	 */
+	exports.inherits = __webpack_require__(681);
+
+	exports._extend = function(origin, add) {
+	  // Don't do anything if add isn't an object
+	  if (!add || !isObject(add)) return origin;
+
+	  var keys = Object.keys(add);
+	  var i = keys.length;
+	  while (i--) {
+	    origin[keys[i]] = add[keys[i]];
+	  }
+	  return origin;
+	};
+
+	function hasOwnProperty(obj, prop) {
+	  return Object.prototype.hasOwnProperty.call(obj, prop);
+	}
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(3)))
+
+/***/ }),
+/* 680 */
+/***/ (function(module, exports) {
+
+	module.exports = function isBuffer(arg) {
+	  return arg && typeof arg === 'object'
+	    && typeof arg.copy === 'function'
+	    && typeof arg.fill === 'function'
+	    && typeof arg.readUInt8 === 'function';
+	}
+
+/***/ }),
+/* 681 */
+/***/ (function(module, exports) {
+
+	if (typeof Object.create === 'function') {
+	  // implementation from standard node.js 'util' module
+	  module.exports = function inherits(ctor, superCtor) {
+	    ctor.super_ = superCtor
+	    ctor.prototype = Object.create(superCtor.prototype, {
+	      constructor: {
+	        value: ctor,
+	        enumerable: false,
+	        writable: true,
+	        configurable: true
+	      }
+	    });
+	  };
+	} else {
+	  // old school shim for old browsers
+	  module.exports = function inherits(ctor, superCtor) {
+	    ctor.super_ = superCtor
+	    var TempCtor = function () {}
+	    TempCtor.prototype = superCtor.prototype
+	    ctor.prototype = new TempCtor()
+	    ctor.prototype.constructor = ctor
+	  }
+	}
+
+
+/***/ }),
+/* 682 */
+/***/ (function(module, exports) {
+
+	exports.lookup = function(obj, field) {
+	  if (!obj) { return null; }
+	  var chain = field.split(']').join('').split('[');
+	  for (var i = 0, len = chain.length; i < len; i++) {
+	    var prop = obj[chain[i]];
+	    if (typeof(prop) === 'undefined') { return null; }
+	    if (typeof(prop) !== 'object') { return prop; }
+	    obj = prop;
+	  }
+	  return null;
+	};
+
 
 /***/ })
 /******/ ]);

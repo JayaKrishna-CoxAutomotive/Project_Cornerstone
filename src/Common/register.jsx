@@ -6,6 +6,7 @@ import {browserHistory} from 'react-router';
 
 var $ = require ('jquery');
 var Errors=[]
+var k=0;
 
 class register extends React.Component {
   constructor(props) {
@@ -30,9 +31,13 @@ class register extends React.Component {
       success: function(data) {
         //We set the state again after submission, to update with the submitted data
         console.log("great")
+        console.log(Errors.length)
         console.log(data);
         Errors.push(data)
         console.log(Errors.length)
+        if(Errors.length>0){
+          k=1;
+        }
       }.bind(this),
       error: function(xhr, status, err) {
         console.log("error status"+err)
@@ -41,10 +46,11 @@ class register extends React.Component {
         console.error("http://localhost:3000/register", status, err.toString());
       }.bind(this)
     });
+    this.forceUpdate();
      //console.log("here are your ")
      console.log("Length of error matrix"+Errors.length)
-     //browserHistory.push('/Login');
-       //alert('You are ready to login with your new username')
+     browserHistory.push('/Login');
+     alert('You are ready to login with your new username')
    }
       //browserHistory.push('/Login');
        //alert('You are ready to login with your new username')
@@ -57,10 +63,16 @@ class register extends React.Component {
 
     render(){
       console.log("here are your errors"+Errors);
+    
       
         return(
+          
            <form className="form" onSubmit={this.handleSubmit}>  
-             <div className='alert-danger'>Waring </div>
+             <div className='alert-danger'>
+                <h1>
+          { k==1 ?  'Passwords didnt match' : '' }
+        </h1>
+                </div>
    <div class="form-group">
     <label className="control-label">Name</label>
     <input ref="name" type="text"  className="form-control" class="form-control" placeholder="Name"  name="name" required/>
@@ -86,5 +98,5 @@ class register extends React.Component {
         )
     }
 }
-   
+  //ReactDOM.render(<register/>); 
   export default register

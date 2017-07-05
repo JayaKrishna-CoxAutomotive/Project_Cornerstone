@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const port = process.env.PORT || 3000
 var router = express.Router();
+var LocalStrategy = require('passport-local').Strategy;
 const app = express()
 
 
@@ -163,9 +164,61 @@ console.log(name)
                   console.log("User with name " + result.Name + " has been created.");
                 });
     res.json({ message: 'User has been created' }); 
+    res.redirect('/Login')
 	}
    
      //res.json(result.data);
+});
+module.exports.getUserByUsername = function(username, callback){
+	var query = {username: username};
+	db.findOne(query, callback);
+}
+
+module.exports.getUserById = function(id, callback){
+	User.findById(id, callback);
+}
+
+module.exports.comparePassword = function(candidatePassword, hash, callback){
+	bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+    	if(err) throw err;
+    	callback(null, isMatch);
+	});
+}
+
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+   User.getUserByUsername(username, function(err, user){
+   	if(err) throw err;
+   	if(!user){
+   		return done(null, false, {message: 'Unknown User'});
+   	}
+
+   	User.comparePassword(password, user.password, function(err, isMatch){
+   		if(err) throw err;
+   		if(isMatch){
+   			return done(null, user);
+   		} else {
+   			return done(null, false, {message: 'Invalid password'});
+   		}
+   	});
+   });
+  }));
+
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.getUserById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+
+
+  app.post('/login', function(req, res) {
+  
 });
 
 db = new neo4j('http://neo4j:OMSAIRAM@faith1@0.0.0.0:7474');
@@ -263,6 +316,7 @@ app.post('/defineProcess', function(req, res) {
                 });
     res.json({ message: 'Process has been created' });   
 });
+
 
 //This will be called from Java library to create a Process instance for the Process
 app.post('/creatProcessInstance', function(req, res) {
