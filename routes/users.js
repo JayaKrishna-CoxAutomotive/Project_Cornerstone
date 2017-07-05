@@ -14,7 +14,7 @@ router.get('/Login', function (req, res) {
     res.render('Login'); // load the single view file (angular will handle the page changes on the front-end)
 });
 
-router.post('/register', function(req, res) {
+/*router.post('/register', function(req, res) {
    var name = req.body.name;
 	var email = req.body.email;
 	var username = req.body.username;
@@ -38,6 +38,6 @@ console.log(name)
 	} else {
 		console.log("success")
 	}
-});
+});*/
 
 module.exports = router;

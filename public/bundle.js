@@ -83707,34 +83707,79 @@
 
 
 	var $ = __webpack_require__(247);
+	var Errors = [];
 
 	var register = function (_React$Component) {
 	  _inherits(register, _React$Component);
 
-	  function register() {
+	  function register(props) {
 	    _classCallCheck(this, register);
 
-	    return _possibleConstructorReturn(this, (register.__proto__ || Object.getPrototypeOf(register)).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, (register.__proto__ || Object.getPrototypeOf(register)).call(this, props));
+
+	    _this.handleSubmit = _this.handleSubmit.bind(_this);
+	    return _this;
 	  }
 
 	  _createClass(register, [{
 	    key: "handleSubmit",
 	    value: function handleSubmit(e) {
-	      _reactRouter.browserHistory.push('/Login');
-	      alert('You are ready to login with your new username');
-	      _reactRouter.browserHistory.push('/login');
-	      // this.setState({ redirectToNewPage: true })
-	      //   e.preventDefault();
+	      e.preventDefault();
+
+	      var formData = {};
+	      for (var field in this.refs) {
+	        formData[field] = this.refs[field].value;
+	      }
+	      console.log('-->', formData);
+
+	      $.ajax({
+	        url: "http://localhost:3000/register",
+	        dataType: 'json',
+	        type: 'POST',
+	        contentType: 'application/json',
+	        data: JSON.stringify(formData),
+	        success: function (data) {
+	          //We set the state again after submission, to update with the submitted data
+	          console.log("great");
+	          console.log(data);
+	          Errors.push(data);
+	          console.log(Errors.length);
+	        }.bind(this),
+	        error: function (xhr, status, err) {
+	          console.log("error status" + err);
+	          console.log(status);
+	          console.log("end" + xhr);
+	          console.error("http://localhost:3000/register", status, err.toString());
+	        }.bind(this)
+	      });
+	      //console.log("here are your ")
+	      console.log("Length of error matrix" + Errors.length
+	      //browserHistory.push('/Login');
+	      //alert('You are ready to login with your new username')
+	      );
 	    }
+	    //browserHistory.push('/Login');
+	    //alert('You are ready to login with your new username')
+	    //browserHistory.push('/login');
+	    // this.setState({ redirectToNewPage: true })
+	    //   e.preventDefault();
+
 
 	    //  FLUX Actions--Dispatchers--Stores--Views
 
 	  }, {
 	    key: "render",
 	    value: function render() {
+	      console.log("here are your errors" + Errors);
+
 	      return React.createElement(
 	        "form",
 	        { className: "form", onSubmit: this.handleSubmit },
+	        React.createElement(
+	          "div",
+	          { className: "alert-danger" },
+	          "Waring "
+	        ),
 	        React.createElement(
 	          "div",
 	          { "class": "form-group" },
@@ -83743,7 +83788,7 @@
 	            { className: "control-label" },
 	            "Name"
 	          ),
-	          React.createElement("input", { type: "text", className: "form-control", "class": "form-control", placeholder: "Name", name: "name", required: true })
+	          React.createElement("input", { ref: "name", type: "text", className: "form-control", "class": "form-control", placeholder: "Name", name: "name", required: true })
 	        ),
 	        React.createElement(
 	          "div",
@@ -83753,7 +83798,7 @@
 	            null,
 	            "Username"
 	          ),
-	          React.createElement("input", { type: "text", className: "form-control", "class": "form-control", placeholder: "Username", name: "username", required: true })
+	          React.createElement("input", { ref: "username", type: "text", className: "form-control", "class": "form-control", placeholder: "Username", name: "username", required: true })
 	        ),
 	        React.createElement(
 	          "div",
@@ -83763,7 +83808,7 @@
 	            null,
 	            "Email"
 	          ),
-	          React.createElement("input", { type: "email", className: "form-control", "class": "form-control", placeholder: "Email", name: "email", required: true })
+	          React.createElement("input", { ref: "email", type: "email", className: "form-control", "class": "form-control", placeholder: "Email", name: "email", required: true })
 	        ),
 	        React.createElement(
 	          "div",
@@ -83773,7 +83818,7 @@
 	            null,
 	            "Password"
 	          ),
-	          React.createElement("input", { type: "password", className: "form-control", "class": "form-control", placeholder: "Password", name: "password", required: true })
+	          React.createElement("input", { ref: "password", type: "password", className: "form-control", "class": "form-control", placeholder: "Password", name: "password", required: true })
 	        ),
 	        React.createElement(
 	          "div",
@@ -83783,7 +83828,7 @@
 	            null,
 	            "Confirm Password"
 	          ),
-	          React.createElement("input", { type: "password", className: "form-control", "class": "form-control", placeholder: "Password", name: "password2", required: true })
+	          React.createElement("input", { ref: "password2", type: "password", className: "form-control", "class": "form-control", placeholder: "Password", name: "password2", required: true })
 	        ),
 	        React.createElement(
 	          "button",

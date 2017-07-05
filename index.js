@@ -1,8 +1,9 @@
 const express = require('express')
 const path = require('path')
 const port = process.env.PORT || 3000
-
+var router = express.Router();
 const app = express()
+
 
 var bodyParser = require( 'body-parser' );
 var dateFormat = require('dateformat');
@@ -130,7 +131,42 @@ app.get('/swagger.json', function(req, res) {
   res.send(swaggerSpec);
 });
 
+app.post('/register', function(req, res) {
+    console.log(req)
+   var name = req.body.name;
+	var email = req.body.email;
+	var username = req.body.username;
+	var password = req.body.password;
+	var password2 = req.body.password2;
+		req.checkBody('name', 'Name is required').notEmpty();
+	req.checkBody('email', 'Email is required').notEmpty();
+	req.checkBody('email', 'Email is not valid').isEmail();
+	req.checkBody('username', 'Username is required').notEmpty();
+	req.checkBody('password', 'Password is required').notEmpty();
+	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
 
+console.log(name)
+	var errors = req.validationErrors();
+      	if(errors){
+			  console.log("errors are there")
+              res.json({ message: errors }); 
+		
+	} else {
+		  db.insertNode({
+                    Name :req.body.name,
+	                Email : req.body.email,
+	                Username : req.body.username,
+	                Password : req.body.password,
+	                Password2:req.body.password2
+                   
+                }, 'Users', function (err, result) {
+                  console.log("User with name " + result.Name + " has been created.");
+                });
+    res.json({ message: 'User has been created' }); 
+	}
+   
+     //res.json(result.data);
+});
 
 db = new neo4j('http://neo4j:OMSAIRAM@faith1@0.0.0.0:7474');
 
