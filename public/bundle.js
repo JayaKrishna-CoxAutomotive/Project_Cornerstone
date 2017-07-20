@@ -84843,6 +84843,8 @@
 
 	var dataSetList = [];
 	var metaData = undefined;
+	var moviearr = [];
+	var state_selected = '';
 	//---------------------------------------------
 
 	var About = function (_Component) {
@@ -84859,6 +84861,7 @@
 	            dragging: false,
 	            files: [],
 	            dataSetFlag: false,
+	            ProcessFlag: false,
 	            metaDataFlag: false,
 	            show: true,
 	            initial: false,
@@ -84886,7 +84889,22 @@
 	                    }
 	                    self.setState({ dataSetFlag: true });
 	                }
+	            }), $.ajax({
+	                type: 'POST',
+	                url: 'http://localhost:3000/getAllProcess',
+	                async: false,
+	                dataType: 'json',
+	                success: function success(data) {
+	                    //console.log("Hello")
+	                    //console.log(data[2].ProcessName);
+	                    for (var i = 0; i < data.length; i++) {
+	                        moviearr[i] = data[i].ProcessName;
+	                    };
+	                    self.setState({ ProcessFlag: true });
+	                }
+
 	            });
+	            console.log(moviearr);
 	        }
 	    }, {
 	        key: 'handleDragStart',
@@ -84938,6 +84956,19 @@
 	            });
 	        }
 	    }, {
+	        key: 'handleInputChange1',
+	        value: function handleInputChange1(e) {
+	            e.preventDefault();
+
+	            var name = e.target.name;
+	            //console.log( e.target.value)
+	            state_selected = e.target.value;
+	            console.log(state_selected);
+	            var state = this.state;
+	            state[name] = e.target.value;
+	            this.setState(state);
+	        }
+	    }, {
 	        key: 'handleDrag',
 	        value: function handleDrag(width) {
 	            if (width >= 300 && width <= 400) {
@@ -84964,9 +84995,39 @@
 	            });
 	        }
 	    }, {
+	        key: 'addtoProducer',
+	        value: function addtoProducer(e) {
+	            console.log(state_selected
+
+	            /* $.ajax({
+	                url: "http://localhost:3000/defineProcess",
+	                dataType: 'json',
+	                type: 'POST',
+	                contentType: 'application/json',
+	                data: JSON.stringify(lookup),
+	                success: function(data) {
+	                  //We set the state again after submission, to update with the submitted data
+	                  this.setState({data: data});
+	                  console.log(data);
+	                }.bind(this),
+	                error: function(xhr, status, err) {
+	                  console.error("http://localhost:8081/defineProcess", status, err.toString());
+	                }.bind(this)
+	              });*/
+
+	            );
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-	            if (this.state.dataSetFlag) {
+	            if (this.state.dataSetFlag && this.state.ProcessFlag) {
+	                var Process_List = moviearr.map(function (env) {
+	                    return _react2.default.createElement(
+	                        'option',
+	                        { value: env },
+	                        env
+	                    );
+	                });
 	                if (!this.state.initial) {
 	                    this.handleInputChange();
 	                }
@@ -85007,7 +85068,39 @@
 	                            null,
 	                            'Meta Data'
 	                        ),
-	                        _react2.default.createElement(JSONViewer, { json: metaData })
+	                        _react2.default.createElement(JSONViewer, { json: metaData }),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'form-group' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn', type: 'submit' },
+	                                'Process'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'form-group' },
+	                            _react2.default.createElement(
+	                                'form',
+	                                { className: 'form' },
+	                                _react2.default.createElement(
+	                                    'label',
+	                                    { className: 'control-label', htmlFor: 'selection' },
+	                                    'Business Unit Name:'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'select',
+	                                    { className: 'form-control', id: 'BusinessUnit', name: 'name', value: this.state.name, onChange: this.handleInputChange1 },
+	                                    Process_List
+	                                ),
+	                                _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn', onClick: this.addtoProducer, type: 'submit' },
+	                                    'Add to Producer'
+	                                )
+	                            )
+	                        )
 	                    )
 	                );
 	            } else {

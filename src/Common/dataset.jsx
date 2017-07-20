@@ -10,6 +10,8 @@ var JSONViewer = require('react-json-viewer');
 
 var dataSetList = [];
 var metaData = undefined;
+var moviearr=[]
+var state_selected=''
 //---------------------------------------------
 class About extends Component {
     constructor(props) {
@@ -20,6 +22,7 @@ class About extends Component {
             dragging: false,
             files: [],
             dataSetFlag: false,
+            ProcessFlag: false,
             metaDataFlag: false,
             show: true,
             initial: false,
@@ -45,8 +48,27 @@ class About extends Component {
                 }
                 self.setState({ dataSetFlag: true });
             }
+        }),
+          $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/getAllProcess',
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+                //console.log("Hello")
+                //console.log(data[2].ProcessName);
+                for (let i = 0; i < data.length; i++) {
+                    moviearr[i] = (data[i].ProcessName)
+                };
+                self.setState({ ProcessFlag: true });
+
+            },
+
+
         })
+        console.log(moviearr)
     }
+   
     handleDragStart() {
         this.setState({
             dragging: true,
@@ -89,6 +111,19 @@ class About extends Component {
         });
 
     }
+     handleInputChange1(e){
+      e.preventDefault();
+    
+      var name = e.target.name;
+      //console.log( e.target.value)
+       state_selected = e.target.value;
+      console.log(state_selected )
+       var state = this.state;
+      state[name] = e.target.value;
+      this.setState(state);
+      
+    }
+
     handleDrag(width) {
         if (width >= 300 && width <= 400) {
             this.setState({ size: 300 });
@@ -107,9 +142,32 @@ class About extends Component {
             console.log(`Successfully uploaded ${file.name}!`);
         });
     }
+    addtoProducer(e){
+        console.log(state_selected)
+  
+  /* $.ajax({
+      url: "http://localhost:3000/defineProcess",
+      dataType: 'json',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(lookup),
+      success: function(data) {
+        //We set the state again after submission, to update with the submitted data
+        this.setState({data: data});
+        console.log(data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error("http://localhost:8081/defineProcess", status, err.toString());
+      }.bind(this)
+    });*/
+   
+}
 
     render() {
-        if (this.state.dataSetFlag) {
+        if (this.state.dataSetFlag && this.state.ProcessFlag) {
+            var Process_List = moviearr.map((env) =>
+                <option value={env}>{env}</option>
+            );
             if (!this.state.initial) {
                 this.handleInputChange();
             }
@@ -130,8 +188,23 @@ class About extends Component {
                         </div>
                     </div >
                     <div style={Object.assign({})}>
+                      
                         <h4>Meta Data</h4>
                         <JSONViewer json={metaData}></JSONViewer>
+                          <div className="form-group">
+                    <button className="btn" type="submit">Process</button>
+                </div>
+
+                <div className="form-group" >
+                     <form className="form" >
+                        <label className="control-label" htmlFor="selection">Business Unit Name:</label>
+                        <select className="form-control" id="BusinessUnit" name="name" value={this.state.name} onChange={this.handleInputChange1}  >
+                            {Process_List}
+                        </select>
+                         <button className="btn" onClick={this.addtoProducer} type="submit">Add to Producer</button>
+                         </form>
+                    </div>
+                   
                     </div>
                 </SplitPane>
             );
