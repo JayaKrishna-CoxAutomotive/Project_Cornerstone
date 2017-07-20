@@ -4,7 +4,13 @@ const port = process.env.PORT || 3000
 var router = express.Router();
 var LocalStrategy = require('passport-local').Strategy;
 const app = express()
-
+var fs = require("fs");
+var avro = require('avro-js');
+var file = require("file");
+var dateFormat = require('dateformat');
+var lastRunDate = new Date('2013-05-23');
+var scanTime = 0;
+var fileList = [];
 
 var bodyParser = require( 'body-parser' );
 var dateFormat = require('dateformat');
@@ -221,7 +227,85 @@ passport.deserializeUser(function(id, done) {
   
 });
 
+app.post('/getDataSetList', function(req, res) {
+   db.cypherQuery('MATCH (n:DataSet) return n', function (err, result) {
+            res.json(result.data);
+        });
+});
+app.post('/dataSetNodeCreater', function(req, res) {
+    
+        fileList = [];
+        file.walkSync("./avroFiles", function (start, dirs, names) {
+            fileList.push({
+                FileName: "" + names,
+                path: "./" + start + "/" + names,
+                time: "",
+                size: ""
+            });
+        });
+        fileList.reverse().pop();
+        console.log("Last Run Time :" + lastRunDate);
+        getFileDetails(fileList);
+        makeNodeForAFile(fileList);
+        var now = new Date();
+        lastRunDate = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+        res.json(fileList);
+    }
+);
+
+app.post('/getMetaData', function(req, res) {
+   console.log("In meta");
+        console.log(req.body.dataSetPath);
+        avro.createFileDecoder(req.body.dataSetPath)
+            .on('metadata', function (type) {
+                res.json(type);
+            })
+            .on('data', function (record) {
+                console.log(record);
+            })
+});
+
+  app.post('/getAllBUnit', function(req, res) {
+    db.cypherQuery('MATCH (n:BusinessUnit)  WHERE n.State = "Active" return n', function(err, result) {
+            res.json(result.data);
+        });
+});
+  
+   
 db = new neo4j('http://neo4j:OMSAIRAM@faith1@0.0.0.0:7474');
+
+app.post('/CreateBU', function(req, res) {
+    console.log(req)
+    console.log("vampire")
+    console.log(req.body.description)
+    db.insertNode({
+        Name: req.body.description,
+        State: 'Active',
+    }, 'BusinessUnit', function(err, result) {
+        console.log("BusinessUnit with name " + result.Name + " has been created.");
+    });
+    res.json({ message: 'Process has been created' });
+});
+
+app.post('/DeleteBU', function(req, res) {
+    console.log(req.body.description)
+    db.cypherQuery('MATCH (n:BusinessUnit) Where n.Name in [ ' + req.body.description + ' ]  SET n.State = "InActive"', function(err, result) {
+       
+        console.log(result)
+            //res.json(result.data);
+    });
+
+});
+
+app.post('/ModifyBU', function(req, res) {
+    console.log("Modify" + req.body.description)
+    console.log("Old" + req.body.OldState)
+    db.cypherQuery('MATCH (n:BusinessUnit) Where n.Name="' + req.body.OldState + '" SET n.Name = "' + req.body.description + '"', function(err, result) {
+        console.log(err)
+            //res.json(result.data);
+    });
+
+});
 
 
 
@@ -290,6 +374,7 @@ app.post('/CreateEnvironment', function(req, res) {
     app.post('/DeleteEnvironment', function(req, res) {
         console.log("server"+req.body.description)
         db.cypherQuery('MATCH (n:Environment) Where n.Name in [ ' + req.body.description + ' ]  SET n.State = "InActive"', function(err, result) {
+            
         console.log(err)
         //res.json(result.data);
     });
@@ -384,6 +469,35 @@ function makeRelationshipProcessInstance(node,result){
     db.insertRelationship(other_node_id, root_node_id, 'INSTANCE_OF', {}, function(err, result){
     });
 
+}
+function makeNodeForAFile(fileList) {
+    var query = "create";
+    var flag = false;
+    for(i = 0; i < fileList.length; i++){
+        var date = new Date(fileList[i].time);
+        if(date>lastRunDate){
+            flag = true;
+            query += " (:DataSet {Name : '"+fileList[i].FileName+"', path : '"+fileList[i].path+"', time : '"+fileList[i].time+"' , size: '"+fileList[i].size+"'}),"
+        }
+    }
+    if(flag){
+        console.log(query);
+        query = query.substring(0, query.length - 1);
+        db.cypherQuery(query, function (err, result) {
+            console.log(err);
+        });
+    }
+}
+
+function getFileDetails(fileList) {
+    for (i = 0; i < fileList.length; i++) {
+        var fileName = fileList[i].path;
+        if (fs.existsSync(fileName)) {
+            var stats = fs.statSync(fileName);
+        }
+        fileList[i].time = stats.birthtime;
+        fileList[i].size = stats.size;
+    }
 }
 
 //Port on which the pplication is listening

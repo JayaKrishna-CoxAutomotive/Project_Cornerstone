@@ -78,6 +78,14 @@
 
 	var _Login2 = _interopRequireDefault(_Login);
 
+	var _dataset = __webpack_require__(683);
+
+	var _dataset2 = _interopRequireDefault(_dataset);
+
+	var _businessUnitDetail = __webpack_require__(686);
+
+	var _businessUnitDetail2 = _interopRequireDefault(_businessUnitDetail);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	//import CarDetail from './car/car-detail.component.jsx'
@@ -93,7 +101,9 @@
 	        _react2.default.createElement(_reactRouter.Route, { path: '/', component: _homeComponent2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: '/cars', component: _carComponent2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: '/about', component: _aboutComponent2.default }),
-	        _react2.default.createElement(_reactRouter.Route, { path: '/Login', component: _Login2.default })
+	        _react2.default.createElement(_reactRouter.Route, { path: '/Login', component: _Login2.default }),
+	        _react2.default.createElement(_reactRouter.Route, { path: '/dataset', component: _dataset2.default }),
+	        _react2.default.createElement(_reactRouter.Route, { path: '/BusinessUnit', component: _businessUnitDetail2.default })
 	    )
 	), document.getElementById('container'));
 	// Import routing components
@@ -27600,7 +27610,16 @@
 	                                    _react2.default.createElement(
 	                                        _reactRouter.Link,
 	                                        { to: '/about', activeClassName: 'active' },
-	                                        'About'
+	                                        'Environment'
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'li',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        _reactRouter.Link,
+	                                        { to: '/businessUnit', activeClassName: 'active' },
+	                                        'Business Unit'
 	                                    )
 	                                ),
 	                                _react2.default.createElement(
@@ -27619,6 +27638,15 @@
 	                                        _reactRouter.Link,
 	                                        { to: '/Login', activeClassName: 'active' },
 	                                        'Login'
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'li',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        _reactRouter.Link,
+	                                        { to: '/dataset', activeClassName: 'active' },
+	                                        'Dataset'
 	                                    )
 	                                )
 	                            )
@@ -84767,6 +84795,1195 @@
 	  return null;
 	};
 
+
+/***/ }),
+/* 683 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(182);
+
+	var _reactSplitPane = __webpack_require__(613);
+
+	var _reactSplitPane2 = _interopRequireDefault(_reactSplitPane);
+
+	var _reactPopup = __webpack_require__(658);
+
+	var _reactPopup2 = _interopRequireDefault(_reactPopup);
+
+	var _reactDropdown = __webpack_require__(664);
+
+	var _reactDropdown2 = _interopRequireDefault(_reactDropdown);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var $ = __webpack_require__(247);
+	var classNames = __webpack_require__(251);
+	var FileInput = __webpack_require__(684);
+	var JSONViewer = __webpack_require__(685);
+
+	var dataSetList = [];
+	var metaData = undefined;
+	//---------------------------------------------
+
+	var About = function (_Component) {
+	    _inherits(About, _Component);
+
+	    function About(props) {
+	        _classCallCheck(this, About);
+
+	        var _this = _possibleConstructorReturn(this, (About.__proto__ || Object.getPrototypeOf(About)).call(this, props));
+
+	        _this.state = {
+	            name: "",
+	            size: undefined,
+	            dragging: false,
+	            files: [],
+	            dataSetFlag: false,
+	            metaDataFlag: false,
+	            show: true,
+	            initial: false,
+	            class: undefined
+	        };
+	        _this.handleDragStart = _this.handleDragStart.bind(_this);
+	        _this.handleDragEnd = _this.handleDragEnd.bind(_this);
+	        _this.handleDrag = _this.handleDrag.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(About, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var self = this;
+	            $.ajax({
+	                async: "false",
+	                url: "http://localhost:3000/getDataSetList",
+	                dataType: 'json',
+	                type: 'POST',
+	                contentType: 'application/json',
+	                success: function success(data) {
+	                    for (var i = 0; i < data.length; i++) {
+	                        dataSetList[i] = { Name: data[i].Name, Path: data[i].path };
+	                    }
+	                    self.setState({ dataSetFlag: true });
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'handleDragStart',
+	        value: function handleDragStart() {
+	            this.setState({
+	                dragging: true
+	            });
+	        }
+	    }, {
+	        key: 'handleDragEnd',
+	        value: function handleDragEnd() {
+	            var _this2 = this;
+
+	            this.setState({
+	                dragging: false
+	            });
+	            setTimeout(function () {
+	                _this2.setState({ size: undefined });
+	            }, 0);
+	        }
+	    }, {
+	        key: 'handleInputChange',
+	        value: function handleInputChange(e) {
+	            var self = this;
+	            if (e != null) {
+	                e.preventDefault();
+	                var name = e.target.name;
+	                var state = this.state;
+	                state[name] = e.target.value;
+	                this.setState(state);
+	                var data = { 'dataSetPath': e.target.id };
+	                console.log(data);
+	            } else {
+	                var data = { 'dataSetPath': dataSetList[0].Path };
+	                self.setState({ class: dataSetList[0].Path });
+	                self.setState({ initial: true });
+	            }
+	            $.ajax({
+	                type: 'POST',
+	                url: 'http://localhost:3000/getMetaData',
+	                data: data,
+	                async: false,
+	                dataType: 'json',
+	                success: function success(data) {
+	                    metaData = data;
+	                    self.setState({ metaDataFlag: true });
+	                    self.setState({ class: e.target.id });
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'handleDrag',
+	        value: function handleDrag(width) {
+	            if (width >= 300 && width <= 400) {
+	                this.setState({ size: 300 });
+	            } else if (width > 400 && width <= 500) {
+	                this.setState({ size: 500 });
+	            } else {
+	                this.setState({ size: undefined });
+	            }
+	        }
+	    }, {
+	        key: 'handleChange',
+	        value: function handleChange(e, results) {
+	            var _this3 = this;
+
+	            console.log(results);
+	            results.forEach(function (result) {
+	                var _result = _slicedToArray(result, 2),
+	                    e = _result[0],
+	                    file = _result[1];
+
+	                _this3.props.dispatch(uploadFile(e.target.result));
+	                console.log('Successfully uploaded ' + file.name + '!');
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            if (this.state.dataSetFlag) {
+	                if (!this.state.initial) {
+	                    this.handleInputChange();
+	                }
+	                var dslist = [];
+	                for (var i = 0; i < dataSetList.length; i++) {
+	                    var liClasses = classNames({
+	                        'list-group-item': true,
+	                        'active': this.state.class === dataSetList[i].Path
+	                    });
+	                    dslist.push(_react2.default.createElement(
+	                        'li',
+	                        { id: dataSetList[i].Path, value: dataSetList[i].Path, key: dataSetList[i].Path, onClick: this.handleInputChange.bind(this), className: liClasses },
+	                        dataSetList[i].Path
+	                    ));
+	                }
+	                return _react2.default.createElement(
+	                    _reactSplitPane2.default,
+	                    { split: 'vertical', minSize: 150, defaultSize: 445 },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { style: Object.assign({}) },
+	                        _react2.default.createElement(
+	                            'h4',
+	                            null,
+	                            'Data Set'
+	                        ),
+	                        _react2.default.createElement(
+	                            'div',
+	                            null,
+	                            dslist
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { style: Object.assign({}) },
+	                        _react2.default.createElement(
+	                            'h4',
+	                            null,
+	                            'Meta Data'
+	                        ),
+	                        _react2.default.createElement(JSONViewer, { json: metaData })
+	                    )
+	                );
+	            } else {
+
+	                return _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    'No result found for this subscription'
+	                );
+	            }
+	        }
+	    }]);
+
+	    return About;
+	}(_react.Component);
+
+	exports.default = About;
+
+/***/ }),
+/* 684 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var FileInput = React.createClass({
+	  getInitialState: function() {
+	    return {
+	      value: '',
+	      styles: {
+	        parent: {
+	          position: 'relative'
+	        },
+	        file: {
+	          position: 'absolute',
+	          top: 0,
+	          left: 0,
+	          opacity: 0,
+	          width: '100%',
+	          zIndex: 1
+	        },
+	        text: {
+	          position: 'relative',
+	          zIndex: -1
+	        }
+	      }
+	    };
+	  },
+
+	  handleChange: function(e) {
+	    this.setState({
+	      value: e.target.value.split(/(\\|\/)/g).pop()
+	    });
+	    if (this.props.onChange) this.props.onChange(e);
+	  },
+
+	  render: function() {
+	    return React.DOM.div({
+	        style: this.state.styles.parent
+	      },
+
+	      // Actual file input
+	      React.DOM.input({
+	        type: 'file',
+	        name: this.props.name,
+	        className: this.props.className,
+	        onChange: this.handleChange,
+	        disabled: this.props.disabled,
+	        accept: this.props.accept,
+	        style: this.state.styles.file
+	      }),
+
+	      // Emulated file input
+	      React.DOM.input({
+	        type: 'text',
+	        tabIndex: -1,
+	        name: this.props.name + '_filename',
+	        value: this.state.value,
+	        className: this.props.className,
+	        onChange: function() {},
+	        placeholder: this.props.placeholder,
+	        disabled: this.props.disabled,
+	        style: this.state.styles.text
+	      }));
+	  }
+	});
+
+	module.exports = FileInput;
+
+
+/***/ }),
+/* 685 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	(function webpackUniversalModuleDefinition(root, factory) {
+		if(true)
+			module.exports = factory(__webpack_require__(1));
+		else if(typeof define === 'function' && define.amd)
+			define(["React"], factory);
+		else if(typeof exports === 'object')
+			exports["ReactJSONViewer"] = factory(require("react"));
+		else
+			root["ReactJSONViewer"] = factory(root["React"]);
+	})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
+	return /******/ (function(modules) { // webpackBootstrap
+	/******/ 	// The module cache
+	/******/ 	var installedModules = {};
+
+	/******/ 	// The require function
+	/******/ 	function __webpack_require__(moduleId) {
+
+	/******/ 		// Check if module is in cache
+	/******/ 		if(installedModules[moduleId])
+	/******/ 			return installedModules[moduleId].exports;
+
+	/******/ 		// Create a new module (and put it into the cache)
+	/******/ 		var module = installedModules[moduleId] = {
+	/******/ 			exports: {},
+	/******/ 			id: moduleId,
+	/******/ 			loaded: false
+	/******/ 		};
+
+	/******/ 		// Execute the module function
+	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+	/******/ 		// Flag the module as loaded
+	/******/ 		module.loaded = true;
+
+	/******/ 		// Return the exports of the module
+	/******/ 		return module.exports;
+	/******/ 	}
+
+
+	/******/ 	// expose the modules object (__webpack_modules__)
+	/******/ 	__webpack_require__.m = modules;
+
+	/******/ 	// expose the module cache
+	/******/ 	__webpack_require__.c = installedModules;
+
+	/******/ 	// __webpack_public_path__
+	/******/ 	__webpack_require__.p = "";
+
+	/******/ 	// Load entry module and return exports
+	/******/ 	return __webpack_require__(0);
+	/******/ })
+	/************************************************************************/
+	/******/ ([
+	/* 0 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		"use strict";
+
+		var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+		var _react = __webpack_require__(1);
+
+		var _react2 = _interopRequireDefault(_react);
+
+		var _ValueViewer = __webpack_require__(3);
+
+		var _ValueViewer2 = _interopRequireDefault(_ValueViewer);
+
+		var _util = __webpack_require__(4);
+
+		function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+		function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+		function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+		function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+		var ZERO = 0;
+
+		var JSONViewer = function (_Component) {
+		  _inherits(JSONViewer, _Component);
+
+		  function JSONViewer(props, context) {
+		    _classCallCheck(this, JSONViewer);
+
+		    return _possibleConstructorReturn(this, Object.getPrototypeOf(JSONViewer).call(this, props, context));
+		  }
+
+		  _createClass(JSONViewer, [{
+		    key: "renderHeaderByKeys",
+		    value: function renderHeaderByKeys(keys, addExtra) {
+		      var _this2 = this;
+
+		      return _react2.default.createElement(
+		        "thead",
+		        null,
+		        _react2.default.createElement(
+		          "tr",
+		          null,
+		          function () {
+		            if (addExtra === "addExtra") {
+		              return _react2.default.createElement(
+		                "th",
+		                { style: _this2.constructor.styles.td },
+		                _react2.default.createElement("span", { style: { color: "rgb(111, 11, 11)" } })
+		              );
+		            }
+		          }(),
+		          keys.map(function (key, i) {
+		            return _react2.default.createElement(
+		              "th",
+		              { key: i, style: _this2.constructor.styles.td },
+		              _react2.default.createElement(
+		                "span",
+		                { style: { color: "rgb(111, 11, 11)" } },
+		                key
+		              )
+		            );
+		          })
+		        )
+		      );
+		    }
+		  }, {
+		    key: "objToTable",
+		    value: function objToTable(obj) {
+		      var _this3 = this;
+
+		      if (JSON.stringify(obj) === "{}") {
+		        return "{ }";
+		      } else {
+		        return _react2.default.createElement(
+		          "table",
+		          null,
+		          this.renderHeaderByKeys(Object.keys(obj)),
+		          _react2.default.createElement(
+		            "tbody",
+		            null,
+		            _react2.default.createElement(
+		              "tr",
+		              null,
+		              (0, _util.loopObject)(obj, function (v, key) {
+		                return _this3.renderTd(v, key);
+		              })
+		            )
+		          )
+		        );
+		      }
+		    }
+		  }, {
+		    key: "arrayToTable",
+		    value: function arrayToTable(obj) {
+		      var _this4 = this;
+
+		      if ((0, _util.getType)(obj) === "Array" && obj.length === ZERO) {
+		        return "[ ]";
+		      } else {
+		        return _react2.default.createElement(
+		          "table",
+		          null,
+		          _react2.default.createElement(
+		            "tbody",
+		            null,
+		            (0, _util.loopObject)(obj, function (v, key) {
+		              return _react2.default.createElement(
+		                "tr",
+		                null,
+		                _react2.default.createElement(
+		                  "td",
+		                  { style: _this4.constructor.styles.td },
+		                  "" + key
+		                ),
+		                _this4.renderTd(v, key)
+		              );
+		            })
+		          )
+		        );
+		      }
+		    }
+		  }, {
+		    key: "oobToTable",
+		    value: function oobToTable(aob) {
+		      var _this5 = this;
+
+		      return _react2.default.createElement(
+		        "table",
+		        null,
+		        this.renderHeaderByKeys(Object.keys((0, _util.getFirstEle)(aob)), "addExtra"),
+		        _react2.default.createElement(
+		          "tbody",
+		          null,
+		          (0, _util.loopObject)(aob, function (row, j) {
+		            return _react2.default.createElement(
+		              "tr",
+		              { key: j },
+		              _react2.default.createElement(
+		                "td",
+		                { style: _this5.constructor.styles.td },
+		                _react2.default.createElement(_ValueViewer2.default, { value: j })
+		              ),
+		              (0, _util.loopObject)((0, _util.getFirstEle)(aob), function (val, key) {
+		                return _this5.renderTd(row[key], key);
+		              })
+		            );
+		          })
+		        )
+		      );
+		    }
+		  }, {
+		    key: "renderTd",
+		    value: function renderTd(guess, index) {
+		      return _react2.default.createElement(
+		        "td",
+		        { key: index, style: this.constructor.styles.td },
+		        this.decideAndRender(guess)
+		      );
+		    }
+		  }, {
+		    key: "decideAndRender",
+		    value: function decideAndRender(guess) {
+		      if ((0, _util.getType)(guess) === "Array") {
+		        if ((0, _util.checkIfArrayIsAOB)(guess)) {
+		          return this.aobToTable(guess);
+		        } else {
+		          return this.arrayToTable(guess);
+		        }
+		      }
+		      if ((0, _util.getType)(guess) === "Object") {
+		        if ((0, _util.checkIfObjectIsOOB)(guess)) {
+		          return this.oobToTable(guess);
+		        } else {
+		          return this.objToTable(guess);
+		        }
+		      } else {
+		        return _react2.default.createElement(_ValueViewer2.default, { value: guess });
+		      }
+		    }
+		  }, {
+		    key: "aobToTable",
+		    value: function aobToTable(aob) {
+		      var _this6 = this;
+
+		      return _react2.default.createElement(
+		        "table",
+		        null,
+		        this.renderHeaderByKeys(Object.keys((0, _util.getFirstEle)(aob))),
+		        _react2.default.createElement(
+		          "tbody",
+		          null,
+		          (0, _util.loopObject)(aob, function (row, j) {
+		            return _react2.default.createElement(
+		              "tr",
+		              { key: j },
+		              (0, _util.loopObject)((0, _util.getFirstEle)(aob), function (val, key) {
+		                return _this6.renderTd(row[key], key);
+		              })
+		            );
+		          })
+		        )
+		      );
+		    }
+		  }, {
+		    key: "render",
+		    value: function render() {
+		      return _react2.default.createElement(
+		        "div",
+		        null,
+		        this.decideAndRender(this.props.json)
+		      );
+		    }
+		  }]);
+
+		  return JSONViewer;
+		}(_react.Component);
+		JSONViewer.propTypes = {
+		  json: _react2.default.PropTypes.any.isRequired
+		};
+
+		JSONViewer.defaultProps = {};
+
+		JSONViewer.styles = {
+		  td: {
+		    border: "1px solid #cccccc",
+		    textAlign: "left",
+		    margin: 0,
+		    padding: "6px 13px"
+		  },
+		  th: {
+		    border: "1px solid #cccccc",
+		    textAlign: "left",
+		    margin: 0,
+		    padding: "6px 13px",
+		    fontWeight: "bold"
+		  }
+		};
+		module.exports = JSONViewer;
+
+	/***/ },
+	/* 1 */
+	/***/ function(module, exports) {
+
+		module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
+
+	/***/ },
+	/* 2 */,
+	/* 3 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		"use strict";
+
+		Object.defineProperty(exports, "__esModule", {
+		  value: true
+		});
+
+		var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+		var _react = __webpack_require__(1);
+
+		var _react2 = _interopRequireDefault(_react);
+
+		var _util = __webpack_require__(4);
+
+		function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+		function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+		function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+		function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+		var ValueViewer = function (_Component) {
+		  _inherits(ValueViewer, _Component);
+
+		  function ValueViewer(props, context) {
+		    _classCallCheck(this, ValueViewer);
+
+		    return _possibleConstructorReturn(this, Object.getPrototypeOf(ValueViewer).call(this, props, context));
+		  }
+
+		  _createClass(ValueViewer, [{
+		    key: "r",
+		    value: function r() {
+		      switch ((0, _util.getType)(this.props.value)) {
+		        case "String":
+		          return _react2.default.createElement(
+		            "span",
+		            { style: { color: "rgb(255, 65, 60)" } },
+		            "\"" + this.props.value + "\""
+		          );
+		        case "Boolean":
+		          return _react2.default.createElement(
+		            "span",
+		            { style: { color: "rgb(31, 48, 255)" } },
+		            "" + this.props.value
+		          );
+		        case "Number":
+		          return _react2.default.createElement(
+		            "span",
+		            { style: { color: "rgb(31, 49, 255)" } },
+		            "" + this.props.value
+		          );
+		        case "Undefined":
+		          return _react2.default.createElement(
+		            "i",
+		            { style: { color: "#777777" } },
+		            "undefined"
+		          );
+		        case "Null":
+		          return _react2.default.createElement(
+		            "i",
+		            { style: { color: "#777777" } },
+		            "null"
+		          );
+		        case "Date":
+		          return _react2.default.createElement(
+		            "i",
+		            { style: { color: "#007bc7;" } },
+		            "" + JSON.stringify(this.props.value)
+		          );
+		        default:
+		          return _react2.default.createElement(
+		            "span",
+		            { style: { color: "rgb(31, 49, 255)" } },
+		            "" + this.props.value
+		          );
+		      }
+		    }
+		  }, {
+		    key: "render",
+		    value: function render() {
+		      return _react2.default.createElement(
+		        "span",
+		        null,
+		        this.r()
+		      );
+		    }
+		  }]);
+
+		  return ValueViewer;
+		}(_react.Component);
+
+		ValueViewer.propTypes = {};
+		ValueViewer.defaultProps = {};
+		exports.default = ValueViewer;
+
+	/***/ },
+	/* 4 */
+	/***/ function(module, exports) {
+
+		"use strict";
+
+		/**
+		 * Created by narendrasisodiya on 28/10/16.
+		 */
+
+		var ONE = 1;
+		var loopObject = function loopObject(obj, cb, sorted) {
+		  var keys = Object.keys(obj);
+		  if (sorted === true) {
+		    keys.sort();
+		  }
+		  return keys.map(function (key) {
+		    return cb(obj[key], key);
+		  });
+		};
+		var getSortedKeyString = function getSortedKeyString(obj) {
+		  return Object.keys(obj).sort().join(",");
+		};
+		var getType = function getType(val) {
+		  return Object.prototype.toString.call(val).replace(/^\[object\s(.*)\]$/, "$1");
+		};
+		var getFirstEle = function getFirstEle(obj) {
+		  return obj[Object.keys(obj)[0]];
+		};
+
+		var allValuesSameInArray = function allValuesSameInArray(arr) {
+		  for (var i = 1; i < arr.length; i++) {
+		    if (arr[i] !== arr[0]) {
+		      return false;
+		    }
+		  }
+		  return true;
+		};
+
+		var checkIfArrayIsAOB = function checkIfArrayIsAOB(obj) {
+		  if (getType(obj) === "Array" && obj.length > ONE && getType(getFirstEle(obj)) === "Object") {
+		    var test = loopObject(obj, function (row) {
+		      if (getType(row) === "Object") {
+		        return getSortedKeyString(row);
+		      } else {
+		        return "";
+		      }
+		    });
+		    if (test.length > ONE && test[0].length > ONE) {
+		      return allValuesSameInArray(test);
+		    } else {
+		      return false;
+		    }
+		  } else {
+		    return false;
+		  }
+		};
+		var checkIfObjectIsOOB = function checkIfObjectIsOOB(obj) {
+		  if (getType(obj) === "Object" && Object.keys(obj).length > ONE && getType(getFirstEle(obj)) === "Object") {
+		    var test = loopObject(obj, function (row) {
+		      if (getType(row) === "Object") {
+		        return getSortedKeyString(row);
+		      } else {
+		        return "";
+		      }
+		    });
+		    if (test.length > ONE && test[0].length > ONE) {
+		      return allValuesSameInArray(test);
+		    } else {
+		      return false;
+		    }
+		  } else {
+		    return false;
+		  }
+		};
+
+		module.exports = {
+		  loopObject: loopObject,
+		  getSortedKeyString: getSortedKeyString,
+		  getType: getType,
+		  getFirstEle: getFirstEle,
+		  allValuesSameInArray: allValuesSameInArray,
+		  checkIfArrayIsAOB: checkIfArrayIsAOB,
+		  checkIfObjectIsOOB: checkIfObjectIsOOB
+		};
+
+	/***/ }
+	/******/ ])
+	});
+	;
+
+/***/ }),
+/* 686 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrapTable = __webpack_require__(249);
+
+	var _reactSplitPane = __webpack_require__(613);
+
+	var _reactSplitPane2 = _interopRequireDefault(_reactSplitPane);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var $ = __webpack_require__(247);
+	var Env = [];
+	var Old_state = '';
+	var i = 0;
+	var MAX_HEIGHT = 600;
+	var ROW_HEIGHT = 42;
+
+	var products = [{
+	    id: 3,
+	    name: "Product1",
+	    price: 120
+	}, {
+	    id: 2,
+	    name: "Product2",
+	    price: 80
+	}];
+
+	function addProducts(quantity) {
+	    $.ajax({
+	        async: "false",
+	        url: "http://localhost:3000/getAllBUnit",
+	        dataType: 'json',
+	        type: 'POST',
+	        contentType: 'application/json',
+	        success: function success(data) {
+	            Env = [];
+	            for (var i = 0; i < data.length; i++) {
+	                var j = i + 1;
+	                Env.push({
+	                    name: '' + j,
+	                    state: '' + data[i].Name
+	                });
+	            }
+	            console.log(Env);
+	        }
+	    });
+	}
+
+	//addProducts(1);
+
+	var ActionFormatter = function (_React$Component) {
+	    _inherits(ActionFormatter, _React$Component);
+
+	    function ActionFormatter() {
+	        _classCallCheck(this, ActionFormatter);
+
+	        return _possibleConstructorReturn(this, (ActionFormatter.__proto__ || Object.getPrototypeOf(ActionFormatter)).apply(this, arguments));
+	    }
+
+	    _createClass(ActionFormatter, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'button',
+	                { className: 'btn btn-info' },
+	                'Action'
+	            );
+	        }
+	    }]);
+
+	    return ActionFormatter;
+	}(_react2.default.Component);
+
+	function actionFormatter(cell, row) {
+	    return _react2.default.createElement(ActionFormatter, null);
+	}
+
+	function onAfterInsertRow(row) {
+	    var that = this;
+	    var newRowStr = '';
+	    var puEnv = [];
+
+	    for (var prop in row) {
+
+	        newRowStr += prop + ': ' + row[prop] + ' \n';
+	        puEnv = row[prop];
+	    }
+	    console.log("kjfnfjk");
+	    console.log(puEnv);
+	    var lookup = {
+
+	        'description': puEnv
+	    };
+	    $.ajax({
+	        url: "http://localhost:3000/CreateBU",
+	        dataType: 'json',
+	        type: 'POST',
+	        contentType: 'application/json',
+	        data: JSON.stringify(lookup),
+	        success: function (data) {
+	            //We set the state again after submission, to update with the submitted data
+	            //this.setState({data: data});
+	            console.log(data);
+	        }.bind(this),
+	        error: function (xhr, status, err) {
+	            console.error("http://localhost:3000/CreateBU", status, err.toString());
+	        }.bind(this)
+	    });
+
+	    //addProducts(1);
+	    alert('The new row is:\n ' + newRowStr);
+	}
+
+	function customConfirm(next, dropRowKeys) {
+	    var EnvOld = '';
+	    var dropRowKeysStr = dropRowKeys.join(',');
+	    var list = dropRowKeysStr.split(",");
+	    console.log(list.length);
+	    if (list.length == 1) {
+	        EnvOld = "'" + Env[dropRowKeysStr - 1].state + "'";
+	    } else {
+	        for (var k = 0; k < list.length; k++) {
+	            console.log(Env[list[k] - 1].state);
+
+	            if (k == list.length - 1) {
+	                EnvOld += "'" + Env[list[k] - 1].state + "'";
+	            } else {
+	                EnvOld += "'" + Env[list[k] - 1].state + "',";
+	            }
+	        }
+	    }
+
+	    console.log("teo delete" + EnvOld);
+	    console.log(list);
+	    var lookup = {
+
+	        'description': EnvOld
+	    };
+	    console.log(dropRowKeysStr);
+	    $.ajax({
+	        url: "http://localhost:3000/DeleteBU",
+	        dataType: 'json',
+	        type: 'POST',
+	        contentType: 'application/json',
+	        data: JSON.stringify(lookup),
+	        success: function (data) {
+	            //We set the state again after submission, to update with the submitted data
+	            //this.setState({data: data});
+	            console.log(data);
+	        }.bind(this),
+	        error: function (xhr, status, err) {
+	            console.error("http://localhost:3000/DeleteBU", status, err.toString());
+	        }.bind(this)
+	    });
+	    if (confirm('Are you sure you want to delete ' + dropRowKeysStr + '?')) {
+	        // If the confirmation is true, call the function that
+	        // continues the deletion of the record.
+	        next();
+	    }
+	}
+
+	var cellEditProp = {
+	    mode: 'click'
+	};
+
+	var NameEditor = function (_React$Component2) {
+	    _inherits(NameEditor, _React$Component2);
+
+	    function NameEditor(props) {
+	        _classCallCheck(this, NameEditor);
+
+	        var _this2 = _possibleConstructorReturn(this, (NameEditor.__proto__ || Object.getPrototypeOf(NameEditor)).call(this, props));
+
+	        _this2.updateData = _this2.updateData.bind(_this2);
+	        _this2.state = {
+	            name: props.defaultValue,
+	            open: true
+	        };
+	        console.log(props.defaultValue);
+	        Old_state = '' + props.defaultValue;
+
+	        return _this2;
+	    }
+
+	    _createClass(NameEditor, [{
+	        key: 'focus',
+	        value: function focus() {
+	            this.refs.inputRef.focus();
+	        }
+	    }, {
+	        key: 'updateData',
+	        value: function updateData() {
+	            this.props.onUpdate(this.state.name);
+	            var lookup = {
+
+	                'description': this.state.name,
+	                'OldState': Old_state
+	            };
+	            console.log(this.state.name);
+	            console.log(Old_state);
+	            $.ajax({
+	                url: "http://localhost:3000/ModifyBU",
+	                dataType: 'json',
+	                type: 'POST',
+	                contentType: 'application/json',
+	                data: JSON.stringify(lookup),
+	                success: function (data) {
+	                    //We set the state again after submission, to update with the submitted data
+	                    //this.setState({data: data});
+	                    console.log(data);
+	                }.bind(this),
+	                error: function (xhr, status, err) {
+	                    console.error("http://localhost:3000/ModifyBU", status, err.toString());
+	                }.bind(this)
+	            });
+	        }
+	    }, {
+	        key: 'close',
+	        value: function close() {
+	            this.setState({ open: false });
+	            this.props.onUpdate(this.props.defaultValue);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this3 = this;
+
+	            var fadeIn = this.state.open ? 'in' : '';
+	            var display = this.state.open ? 'block' : 'none';
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'modal fade ' + fadeIn, id: 'myModal', role: 'dialog', style: { display: display } },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'modal-dialog' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'modal-content' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'modal-body' },
+	                            _react2.default.createElement('input', {
+	                                ref: 'inputRef',
+	                                className: (this.props.editorClass || '') + ' form-control editor edit-text',
+	                                style: { display: 'inline', width: '50%' },
+	                                type: 'text',
+	                                value: this.state.name,
+	                                onChange: function onChange(e) {
+	                                    _this3.setState({ name: e.currentTarget.value });
+	                                } })
+	                        ),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'modal-footer' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-primary', onClick: this.updateData },
+	                                'Save'
+	                            ),
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'button', className: 'btn btn-default', onClick: this.close.bind(this) },
+	                                'Close'
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return NameEditor;
+	}(_react2.default.Component);
+
+	var businessUnitDetail = function (_Component) {
+	    _inherits(businessUnitDetail, _Component);
+
+	    function businessUnitDetail(props) {
+	        _classCallCheck(this, businessUnitDetail);
+
+	        return _possibleConstructorReturn(this, (businessUnitDetail.__proto__ || Object.getPrototypeOf(businessUnitDetail)).call(this, props));
+	    }
+
+	    _createClass(businessUnitDetail, [{
+	        key: 'getEnvList',
+	        value: function getEnvList() {
+	            console.log("about");
+
+	            $.ajax({
+	                async: "false",
+	                url: "http://localhost:3000/getAllBUnit",
+	                dataType: 'json',
+	                type: 'POST',
+	                contentType: 'application/json',
+	                success: function success(data) {
+	                    Env = [];
+	                    for (var i = 0; i < data.length; i++) {
+	                        Env.push({
+	                            name: '' + i + 1,
+	                            state: '' + data[i].Name
+	                        });
+	                    }
+	                    console.log(Env);
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            //this.getEnvList();
+	            addProducts(1);
+
+	            var selectRowProp = {
+	                mode: 'checkbox',
+	                bgColor: 'pink',
+	                showOnlySelected: true
+	            };
+	            var cellEditProp = {
+	                mode: 'click'
+	            };
+	            var options = {
+	                afterInsertRow: onAfterInsertRow,
+	                handleConfirmDeleteRow: customConfirm // A hook for after insert rows
+	            };
+	            var createNameEditor = function createNameEditor(onUpdate, props) {
+	                return _react2.default.createElement(NameEditor, _extends({ onUpdate: onUpdate }, props));
+	            };
+
+	            // this.getEnvironment()
+	            var numbers = [1, 2, 3, 4, 6];
+	            // Map through cars and return linked cars
+	            var ProcessInstances = numbers.map(function (number) {
+	                return _react2.default.createElement(
+	                    'li',
+	                    { value: number, className: 'list-group-item' },
+	                    number
+	                );
+	            });
+
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    _reactBootstrapTable.BootstrapTable,
+	                    { data: Env, condensed: true, height: String(Math.min([MAX_HEIGHT, (Env.length + 1) * ROW_HEIGHT])), cellEdit: cellEditProp, insertRow: true, deleteRow: true, selectRow: selectRowProp, options: options, search: true, hover: true, pagination: true },
+	                    _react2.default.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'name', width: '50', dataAlign: 'center', isKey: true },
+	                        'S.No'
+	                    ),
+	                    _react2.default.createElement(
+	                        _reactBootstrapTable.TableHeaderColumn,
+	                        { dataField: 'state', customEditor: { getElement: createNameEditor } },
+	                        'State'
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return businessUnitDetail;
+	}(_react.Component);
+
+	exports.default = businessUnitDetail;
 
 /***/ })
 /******/ ]);

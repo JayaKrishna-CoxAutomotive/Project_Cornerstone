@@ -15,9 +15,12 @@ class Main extends Component {
                                 {/* Change from a to Link */}
                                 <li><Link to="/" activeClassName="active">Home</Link></li>
                                 <li><Link to="/cars" activeClassName="active">View Process</Link></li>
-                                <li><Link to="/about" activeClassName="active">About</Link></li>
+                                <li><Link to="/about" activeClassName="active">Environment</Link></li>
+                                 <li><Link to="/businessUnit" activeClassName="active">Business Unit</Link></li>
                                  <li><Link to="/register" activeClassName="active">Register</Link></li>
                                  <li><Link to="/Login" activeClassName="active">Login</Link></li>
+                                  <li><Link to="/dataset" activeClassName="active">Dataset</Link></li>
+
                             </ul>
                         </div>
                     </div>

@@ -9,6 +9,8 @@ import About from './common/about.component.jsx'
 import Car from './car/car.component.jsx'
 import register from './common/register.jsx'
 import Login from './common//Login.jsx'
+import dataset from './common/dataset.jsx'
+import businessUnit from './common/businessUnitDetail.jsx'
 
 //import CarDetail from './car/car-detail.component.jsx'
 
@@ -21,6 +23,9 @@ render(
             <Route path="/cars" component={Car} />
             <Route path="/about" component={About}/>
             <Route path="/Login" component={Login}/>
+            <Route path="/dataset" component={dataset}/>
+             <Route path="/BusinessUnit" component={businessUnit}/>
+
             
              
         </Route>
